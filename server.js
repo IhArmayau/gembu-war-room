@@ -25,8 +25,22 @@ const server = http.createServer((req, res) => {
 
     const { pathname, searchParams } = parseUrl(req.url);
 
-    // Serve Frontend HTML Pages from current folder
-    if (req.method === 'GET' && (pathname === '/' || pathname === '/situation-entry.html')) {
+    // Serve Live Analytics Dashboard as the root homepage
+    if (req.method === 'GET' && pathname === '/') {
+        const filePath = path.join(__dirname, 'dashboard.html');
+        if (fs.existsSync(filePath)) {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            fs.createReadStream(filePath).pipe(res);
+            return;
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'error', message: 'dashboard.html not found' }));
+            return;
+        }
+    }
+
+    // Serve Situation Entry Console at /situation-entry.html
+    if (req.method === 'GET' && pathname === '/situation-entry.html') {
         const filePath = path.join(__dirname, 'situation-entry.html');
         if (fs.existsSync(filePath)) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
