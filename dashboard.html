@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gembu Constituency War Room | GSSS Gembu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen text-slate-100 antialiased font-sans custom-scrollbar selection:bg-emerald-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-900/30 border border-emerald-400/30">
+                    🇳🇬
+                </div>
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <h1 class="text-lg font-black tracking-wide text-white uppercase">Gembu Constituency War Room</h1>
+                        <span id="connectionBadge" class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                        </span>
+                    </div>
+                    <p class="text-xs text-emerald-400 font-semibold mt-0.5 flex items-center gap-2">
+                        <span>📍 Collation Center: <strong>GSSS Gembu</strong></span>
+                        <span class="text-slate-500">•</span>
+                        <span class="text-slate-300">Wards: Gembu A, Gembu B, Mayo Ndaga, Titong</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Ward Filter Dropdown -->
+                <div class="flex items-center bg-slate-950/80 rounded-lg px-3 py-1.5 border border-slate-800 shadow-inner">
+                    <label for="wardFilter" class="text-xs text-slate-400 mr-2 font-medium">Ward Scope:</label>
+                    <select id="wardFilter" onchange="filterResults()" class="bg-slate-900 text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer py-1 rounded border border-slate-700/60 focus:border-emerald-500">
+                        <option value="ALL">All 4 Wards (149 PUs)</option>
+                        <option value="Gembu A">Gembu A Ward</option>
+                        <option value="Gembu B">Gembu B Ward</option>
+                        <option value="Mayo Ndaga">Mayo Ndaga Ward</option>
+                        <option value="Titong">Titong Ward</option>
+                    </select>
+                </div>
+
+                <!-- Export CSV Button -->
+                <button onclick="exportCsv()" class="bg-amber-600/90 hover:bg-amber-500 border border-amber-500/40 px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-lg shadow-amber-950/40 text-white flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export CSV
+                </button>
+
+                <!-- Manual Refresh Button -->
+                <button onclick="fetchResults()" class="bg-emerald-600/90 hover:bg-emerald-500 border border-emerald-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-950/40 text-white flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+
+        <!-- Top Macro Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-slate-800/20 rounded-full blur-xl group-hover:bg-slate-700/30 transition"></div>
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Reporting Polling Units</span>
+                <div class="flex items-baseline justify-between mt-3">
+                    <span id="totalUnits" class="text-3xl font-black text-white">0 / 149</span>
+                    <span id="reportingPercentage" class="text-xs text-emerald-400 font-bold">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-emerald-900/30 hover:border-emerald-700/50 transition">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
+                <span class="text-[11px] font-bold text-emerald-400/90 uppercase tracking-wider">Total BVAS Accredited</span>
+                <div class="flex items-baseline justify-between mt-3">
+                    <span id="totalBvasAccredited" class="text-3xl font-black text-emerald-400">0</span>
+                    <span class="text-xs text-emerald-500/80 font-medium">Gembu Constituency</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-sky-900/30 hover:border-sky-700/50 transition">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-sky-500/10 rounded-full blur-xl group-hover:bg-sky-500/20 transition"></div>
+                <span class="text-[11px] font-bold text-sky-400/90 uppercase tracking-wider">Total Votes Cast</span>
+                <div class="flex items-baseline justify-between mt-3">
+                    <span id="totalVotesCast" class="text-3xl font-black text-sky-400">0</span>
+                    <span id="rejectedVotesTotal" class="text-xs text-slate-400 font-medium">(Rej: 0)</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-rose-900/40 hover:border-rose-700/60 transition">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition"></div>
+                <span class="text-[11px] font-bold text-rose-400/90 uppercase tracking-wider">Forensic Flags</span>
+                <div class="flex items-baseline justify-between mt-3">
+                    <span id="overVotingCount" class="text-3xl font-black text-rose-500">0</span>
+                    <span class="text-xs text-rose-400/80 font-medium">Over-Voting Alerts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Analytics Section (Charts) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Party Share Doughnut Chart -->
+            <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="text-emerald-400">🍩</span> Vote Share Distribution
+                    </h2>
+                </div>
+                <div class="relative h-64 flex items-center justify-center">
+                    <canvas id="partyShareChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Ward Turnout Bar Chart -->
+            <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800 lg:col-span-2 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="text-emerald-400">📈</span> Ward-by-Ward Vote Turnout
+                    </h2>
+                </div>
+                <div class="relative h-64">
+                    <canvas id="wardTurnoutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Constituency Party Standings Grid -->
+        <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-slate-800/80 pb-4">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                    <span class="text-emerald-400">📊</span> Cumulative Constituency Party Standings 
+                    <span class="text-xs font-normal text-slate-400">(4 Wards Overview)</span>
+                </h2>
+                <span id="constituencyLeaderBadge" class="self-start sm:self-auto bg-emerald-950 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/30">
+                    Leading: Pending
+                </span>
+            </div>
+            <div id="constituencyPartyGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="text-xs text-slate-500 col-span-full py-4 text-center">Calculating Ward totals...</div>
+            </div>
+        </div>
+
+        <!-- Ward-Level Summary Cards -->
+        <div class="space-y-4">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span class="text-emerald-400">🏘️</span> 4-Ward Collation Summary (Gembu A, Gembu B, Mayo Ndaga, Titong)
+            </h2>
+            <div id="wardSummaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Polling Unit Data Table -->
+        <div class="glass-card rounded-2xl shadow-xl overflow-hidden border border-slate-800">
+            <div class="px-6 py-5 border-b border-slate-800 flex flex-col md:flex-row justify-between items-md-center gap-4 bg-slate-900/40">
+                <div>
+                    <h2 class="font-bold text-white text-base">Polling Unit Feed (149 Total Units)</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Live EC8A verification feeds transmitting to GSSS Gembu Collation Center</p>
+                </div>
+                
+                <!-- Quick Search Input -->
+                <div class="w-full md:w-72">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        onkeyup="filterResults()" 
+                        placeholder="Search PU Code or Ward Name..." 
+                        class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-inner"
+                    />
+                </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800">
+                            <th class="px-6 py-4 font-bold">PU ID / Ward</th>
+                            <th class="px-6 py-4 font-bold">EC8A Sheet</th>
+                            <th class="px-6 py-4 font-bold">BVAS / Votes</th>
+                            <th class="px-6 py-4 font-bold">Party Breakdown</th>
+                            <th class="px-6 py-4 font-bold">Forensic Security</th>
+                            <th class="px-6 py-4 font-bold">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody" class="divide-y divide-slate-800/60 text-sm">
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 font-medium">
+                                Loading Gembu constituency feeds...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- EC8A Full Preview Modal -->
+    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card bg-slate-900/90 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-700">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                    <h3 id="modalPuTitle" class="font-bold text-white text-base">EC8A Sheet Evidence — GSSS Gembu Center</h3>
+                    <p id="modalHashText" class="text-xs font-mono text-emerald-400 font-semibold truncate max-w-md mt-0.5"></p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1 cursor-pointer transition">✕</button>
+            </div>
+            <div class="bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center max-h-[70vh] border border-slate-800 p-2">
+                <img id="modalImage" src="" alt="Full EC8A Result Sheet" class="max-h-[68vh] w-auto object-contain rounded-lg">
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer border border-slate-700">
+                    Close Inspector
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let cachedGlobalData = [];
+        const BACKEND_URL = window.location.origin;
+        const TOTAL_CONSTITUENCY_PUS = 149;
+
+        let partyShareChartInstance = null;
+        let wardTurnoutChartInstance = null;
+
+        async function fetchResults() {
+            const badge = document.getElementById('connectionBadge');
+            try {
+                const response = await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
+                const data = await response.json();
+                
+                cachedGlobalData = data.results || [];
+                
+                badge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE`;
+                
+                renderDashboard(cachedGlobalData);
+            } catch (error) {
+                console.error('Failed to connect to backend:', error);
+                badge.className = "inline-flex items-center gap-1.5 bg-rose-500/10 text-rose-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-rose-500/30 uppercase";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> OFFLINE`;
+                
+                document.getElementById('resultsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-rose-400 font-medium bg-rose-950/20">
+                            Connection error! Check Node.js server connection at GSSS Gembu Command Hub.
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function filterResults() {
+            renderDashboard(cachedGlobalData);
+        }
+
+        function exportCsv() {
+            window.open(`${BACKEND_URL}/export/csv?constituency=Gembu`, '_blank');
+        }
+
+        function openModal(imgUrl, puId, hash) {
+            document.getElementById('modalImage').src = imgUrl;
+            document.getElementById('modalPuTitle').innerText = `EC8A Sheet Evidence — Polling Unit #${puId}`;
+            document.getElementById('modalHashText').innerText = hash ? `Hash: ${hash}` : '';
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function renderDashboard(resultsArray) {
+            const selectedWard = document.getElementById('wardFilter').value;
+            const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const filteredResults = resultsArray.filter(res => {
+                const matchesWard = selectedWard === 'ALL' || res.ward === selectedWard;
+                const matchesSearch = !searchKeyword || 
+                    (res.pu_id && res.pu_id.toLowerCase().includes(searchKeyword)) ||
+                    (res.ward && res.ward.toLowerCase().includes(searchKeyword));
+                return matchesWard && matchesSearch;
+            });
+
+            let overVotingTotal = 0;
+            let totalBvas = 0;
+            let totalVotes = 0;
+            let totalRejected = 0;
+            const partyCumulativeMap = {};
+            const wardMap = {
+                'Gembu A': { units: 0, totalVotes: 0, overVotes: 0, parties: {} },
+                'Gembu B': { units: 0, totalVotes: 0, overVotes: 0, parties: {} },
+                'Mayo Ndaga': { units: 0, totalVotes: 0, overVotes: 0, parties: {} },
+                'Titong': { units: 0, totalVotes: 0, overVotes: 0, parties: {} }
+            };
+
+            filteredResults.forEach(res => {
+                if (res.is_over_voting) overVotingTotal++;
+                totalBvas += (res.bvas_accredited || 0);
+                totalVotes += (res.total_votes || 0);
+                totalRejected += (res.rejected_votes || 0);
+
+                Object.entries(res.scores || {}).forEach(([party, votes]) => {
+                    partyCumulativeMap[party] = (partyCumulativeMap[party] || 0) + votes;
+                });
+
+                const wardName = res.ward || 'Gembu A';
+                if (!wardMap[wardName]) {
+                    wardMap[wardName] = { units: 0, totalVotes: 0, overVotes: 0, parties: {} };
+                }
+                wardMap[wardName].units++;
+                wardMap[wardName].totalVotes += (res.total_votes || 0);
+                if (res.is_over_voting) wardMap[wardName].overVotes++;
+
+                Object.entries(res.scores || {}).forEach(([party, votes]) => {
+                    wardMap[wardName].parties[party] = (wardMap[wardName].parties[party] || 0) + votes;
+                });
+            });
+
+            document.getElementById('totalUnits').innerText = `${filteredResults.length} / ${TOTAL_CONSTITUENCY_PUS}`;
+            const reportingPct = Math.round((filteredResults.length / TOTAL_CONSTITUENCY_PUS) * 100);
+            document.getElementById('reportingPercentage').innerText = `${reportingPct}% Reported`;
+            
+            document.getElementById('totalBvasAccredited').innerText = totalBvas.toLocaleString();
+            document.getElementById('totalVotesCast').innerText = totalVotes.toLocaleString();
+            document.getElementById('rejectedVotesTotal').innerText = `(Rej: ${totalRejected.toLocaleString()})`;
+            document.getElementById('overVotingCount').innerText = overVotingTotal;
+
+            updateCharts(partyCumulativeMap, wardMap);
+
+            const sortedPartyCumulative = Object.entries(partyCumulativeMap).sort((a, b) => b[1] - a[1]);
+            const partyGrid = document.getElementById('constituencyPartyGrid');
+            partyGrid.innerHTML = '';
+
+            if (sortedPartyCumulative.length > 0) {
+                const leader = sortedPartyCumulative[0];
+                document.getElementById('constituencyLeaderBadge').innerText = `Leading: ${leader[0]} (${leader[1].toLocaleString()}v)`;
+
+                sortedPartyCumulative.forEach(([party, votes], idx) => {
+                    const isTop = idx === 0;
+                    partyGrid.innerHTML += `
+                        <div class="p-3 rounded-xl border ${isTop ? 'bg-emerald-950/40 border-emerald-500/50 text-white shadow-lg shadow-emerald-950/50' : 'bg-slate-900/60 border-slate-800 text-slate-300'}">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold ${isTop ? 'text-emerald-300' : 'text-slate-400'}">${party}</span>
+                                <span class="font-black ${isTop ? 'text-emerald-400' : 'text-slate-200'}">${votes.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                partyGrid.innerHTML = `<div class="text-xs text-slate-500 col-span-full py-2 text-center">No scores recorded yet.</div>`;
+            }
+
+            const wardGrid = document.getElementById('wardSummaryGrid');
+            wardGrid.innerHTML = '';
+
+            Object.entries(wardMap).forEach(([wardName, stats]) => {
+                const sortedParties = Object.entries(stats.parties).sort((a, b) => b[1] - a[1]);
+                const leadingParty = sortedParties.length > 0 ? sortedParties[0][0] : 'None';
+                const leadingVotes = sortedParties.length > 0 ? sortedParties[0][1] : 0;
+
+                let partySummary = sortedParties.slice(0, 4)
+                    .map(([p, v], index) => `
+                        <div class="flex justify-between text-xs py-1 ${index === 0 ? 'font-bold text-emerald-400 bg-emerald-950/40 px-2 rounded-md border border-emerald-800/40' : 'text-slate-400'}">
+                            <span>${index + 1}. ${p}:</span> 
+                            <span>${v.toLocaleString()} v</span>
+                        </div>`)
+                    .join('');
+
+                let card = `
+                    <div class="glass-card p-5 rounded-2xl shadow-lg flex flex-col justify-between border border-slate-800 hover:border-slate-700 transition">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-bold text-white text-base">${wardName}</h3>
+                                    <span class="text-[10px] text-slate-400">${stats.units} PUs Reporting</span>
+                                </div>
+                                <span class="bg-emerald-950 text-emerald-300 text-[11px] px-2 py-0.5 rounded-md font-bold border border-emerald-700/50">1st: ${leadingParty} (${leadingVotes}v)</span>
+                            </div>
+                            <div class="space-y-1 border-t border-slate-800/80 pt-2.5 mb-3">
+                                ${partySummary || '<span class="text-xs text-slate-500">Awaiting ward data</span>'}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs border-t border-slate-800/80 pt-2.5">
+                            <span class="text-slate-400">Flags: <strong class="${stats.overVotes > 0 ? 'text-rose-400' : 'text-slate-200'}">${stats.overVotes}</strong></span>
+                            <span class="text-slate-400">Total: <strong class="text-white">${stats.totalVotes.toLocaleString()}</strong></span>
+                        </div>
+                    </div>
+                `;
+                wardGrid.innerHTML += card;
+            });
+
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredResults.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-500 font-medium">No polling unit records found for Gembu Constituency.</td></tr>`;
+            } else {
+                filteredResults.forEach(res => {
+                    let scoresHtml = Object.entries(res.scores || {})
+                        .map(([party, votes]) => `<span class="inline-block bg-slate-900 border border-slate-700 px-2 py-0.5 rounded-md mr-1 mb-1 text-[11px] font-medium text-slate-300"><strong class="text-emerald-400">${party}</strong>: ${votes}</span>`)
+                        .join('');
+
+                    let flagsHtml = '';
+                    if (res.forensic_flags && res.forensic_flags.length > 0) {
+                        flagsHtml = res.forensic_flags.map(f => `<span class="block text-[10px] bg-amber-950/80 text-amber-300 border border-amber-700/50 px-2 py-0.5 rounded-md mt-1 font-bold">⚡ ${f}</span>`).join('');
+                    }
+
+                    let photoHtml = `<span class="text-xs text-slate-500 italic">No Photo</span>`;
+                    if (res.photo_url) {
+                        const fullPhotoUrl = `${BACKEND_URL}${res.photo_url}`;
+                        photoHtml = `
+                            <button onclick="openModal('${fullPhotoUrl}', '${res.pu_id}', '${res.photo_hash || ''}')" class="focus:outline-none cursor-pointer group">
+                                <img src="${fullPhotoUrl}" alt="EC8A Sheet" class="w-11 h-11 object-cover rounded-lg border border-slate-700 group-hover:border-emerald-500 shadow-md transition">
+                            </button>
+                        `;
+                    }
+
+                    let row = `
+                        <tr class="hover:bg-slate-900/60 transition">
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-white block">#${res.pu_id}</span>
+                                <span class="text-xs text-emerald-400 font-bold">${res.ward || 'Gembu A'}</span>
+                            </td>
+                            <td class="px-6 py-4">${photoHtml}</td>
+                            <td class="px-6 py-4">
+                                <span class="block text-xs text-slate-400">BVAS: <strong class="text-white">${res.bvas_accredited}</strong></span>
+                                <span class="block text-xs text-slate-300 font-medium">Votes: <strong class="text-white">${res.total_votes}</strong> <span class="text-slate-500">(Rej: ${res.rejected_votes})</span></span>
+                            </td>
+                            <td class="px-6 py-4 max-w-xs">${scoresHtml}</td>
+                            <td class="px-6 py-4">
+                                <span class="block text-[11px] font-mono text-slate-400 truncate max-w-[130px]" title="${res.photo_hash || ''}">Hash: ${res.photo_hash ? res.photo_hash.substring(0, 10) + '...' : 'N/A'}</span>
+                                <span class="block text-[11px] text-slate-500">GPS: ${res.location?.latitude?.toFixed(4) || 0}, ${res.location?.longitude?.toFixed(4) || 0}</span>
+                                ${flagsHtml}
+                            </td>
+                            <td class="px-6 py-4">
+                                ${res.is_over_voting 
+                                    ? '<span class="bg-rose-950/80 text-rose-300 text-[11px] px-2.5 py-1 rounded-full font-extrabold border border-rose-700/60 shadow-sm">⚠️ OVER-VOTING</span>' 
+                                    : '<span class="bg-emerald-950/80 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold border border-emerald-700/60 shadow-sm">✓ VERIFIED</span>'}
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            }
+        }
+
+        function updateCharts(partyMap, wardMap) {
+            const parties = Object.keys(partyMap);
+            const partyVotes = Object.values(partyMap);
+
+            const doughnutCtx = document.getElementById('partyShareChart').getContext('2d');
+            if (partyShareChartInstance) {
+                partyShareChartInstance.data.labels = parties.length ? parties : ['Pending'];
+                partyShareChartInstance.data.datasets[0].data = partyVotes.length ? partyVotes : [1];
+                partyShareChartInstance.update();
+            } else {
+                partyShareChartInstance = new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: parties.length ? parties : ['Pending'],
+                        datasets: [{
+                            data: partyVotes.length ? partyVotes : [1],
+                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#065f46'],
+                            borderWidth: 2,
+                            borderColor: '#0f172a'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const wardNames = Object.keys(wardMap);
+            const wardTurnoutVotes = wardNames.map(w => wardMap[w].totalVotes);
+
+            const barCtx = document.getElementById('wardTurnoutChart').getContext('2d');
+            if (wardTurnoutChartInstance) {
+                wardTurnoutChartInstance.data.labels = wardNames;
+                wardTurnoutChartInstance.data.datasets[0].data = wardTurnoutVotes;
+                wardTurnoutChartInstance.update();
+            } else {
+                wardTurnoutChartInstance = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: wardNames,
+                        datasets: [{
+                            label: 'Total Votes Cast',
+                            data: wardTurnoutVotes,
+                            backgroundColor: '#10b981',
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
+                            y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Auto-fetch results on load and poll every 5 seconds
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchResults();
+            setInterval(fetchResults, 5000);
+        });
+    </script>
+</body>
+</html>
