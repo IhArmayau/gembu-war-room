@@ -25,9 +25,9 @@ const server = http.createServer((req, res) => {
 
     const { pathname, searchParams } = parseUrl(req.url);
 
-    // Serve Frontend HTML Pages
+    // Serve Frontend HTML Pages from parent folder
     if (req.method === 'GET' && (pathname === '/' || pathname === '/situation-entry.html')) {
-        const filePath = path.join(__dirname, 'situation-entry.html');
+        const filePath = path.join(__dirname, '../situation-entry.html');
         if (fs.existsSync(filePath)) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             fs.createReadStream(filePath).pipe(res);
@@ -40,7 +40,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (req.method === 'GET' && pathname === '/dashboard.html') {
-        const filePath = path.join(__dirname, 'dashboard.html');
+        const filePath = path.join(__dirname, '../dashboard.html');
         if (fs.existsSync(filePath)) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             fs.createReadStream(filePath).pipe(res);
