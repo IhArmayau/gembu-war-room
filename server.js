@@ -32,6 +32,10 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             fs.createReadStream(filePath).pipe(res);
             return;
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'error', message: 'situation-entry.html not found' }));
+            return;
         }
     }
 
@@ -40,6 +44,10 @@ const server = http.createServer((req, res) => {
         if (fs.existsSync(filePath)) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
             fs.createReadStream(filePath).pipe(res);
+            return;
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'error', message: 'dashboard.html not found' }));
             return;
         }
     }
