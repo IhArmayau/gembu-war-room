@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gembu Constituency War Room | GSSS Gembu</title>
+    <title>Gembu Constituency Situation Room | GSSS Gembu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,7 +28,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-slate-950 h-screen text-slate-100 antialiased font-sans p-4 overflow-hidden flex flex-col justify-between custom-scrollbar">
+<body class="bg-slate-950 min-h-screen text-slate-100 antialiased font-sans p-4 overflow-y-auto flex flex-col justify-between custom-scrollbar">
 
     <!-- Strict Authentication Overlay (Starts Visible) -->
     <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
@@ -37,7 +37,7 @@
                 🔒
             </div>
             <div>
-                <h2 class="text-lg font-black text-white uppercase tracking-wider">War Room Restricted Access</h2>
+                <h2 class="text-lg font-black text-white uppercase tracking-wider">Situation Room Restricted Access</h2>
                 <p class="text-xs text-slate-400 mt-1">GSSS Gembu Collation Center — Authorized Clerks Only</p>
             </div>
             <div class="space-y-3">
@@ -55,14 +55,14 @@
         <!-- Top Banner -->
         <div class="glass-card px-5 py-3 rounded-xl shadow-lg flex justify-between items-center border border-slate-800">
             <div>
-                <h1 class="text-base font-black text-white uppercase tracking-wide">📞 Gembu Constituency War Room</h1>
+                <h1 class="text-base font-black text-white uppercase tracking-wide">📞 Gembu Constituency Situation Room</h1>
                 <p class="text-[11px] text-emerald-400">GSSS Gembu Collation Center — Voice Report Logging (18 INEC Parties)</p>
             </div>
             <div class="flex items-center gap-2">
                 <a href="dashboard.html" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-1.5 rounded-lg transition border border-slate-700">
                     Open Live Dashboard ➔
                 </a>
-                <button onclick="logoutWarRoom()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-bold px-3 py-1.5 rounded-lg transition border border-rose-800/80 cursor-pointer" title="Lock Console & Logout">
+                <button onclick="logoutSituationRoom()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-bold px-3 py-1.5 rounded-lg transition border border-rose-800/80 cursor-pointer" title="Lock Console & Logout">
                     🔒 Logout
                 </button>
             </div>
@@ -211,7 +211,7 @@
 
         // Check if session was already authenticated
         window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('gembu_war_room_auth') === 'true') {
+            if (localStorage.getItem('gembu_situation_room_auth') === 'true') {
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('mainContent').classList.remove('hidden');
             }
@@ -222,7 +222,7 @@
             const errorBox = document.getElementById('authError');
 
             if (inputVal === AUTHORIZED_PIN) {
-                localStorage.setItem('gembu_war_room_auth', 'true');
+                localStorage.setItem('gembu_situation_room_auth', 'true');
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('mainContent').classList.remove('hidden');
             } else {
@@ -231,8 +231,8 @@
             }
         }
 
-        function logoutWarRoom() {
-            localStorage.removeItem('gembu_war_room_auth');
+        function logoutSituationRoom() {
+            localStorage.removeItem('gembu_situation_room_auth');
             document.getElementById('mainContent').classList.add('hidden');
             document.getElementById('authModal').classList.remove('hidden');
             document.getElementById('pinInput').value = '';
