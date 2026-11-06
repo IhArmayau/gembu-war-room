@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gembu Constituency Situation Room | GSSS Gembu</title>
+    <title>Gembu Constituency Official Results Portal | GSSS Gembu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         brand: {
                             50: '#ecfdf5',
-                            500: '#10b981',
-                            600: '#059669',
-                            900: '#064e3b',
-                            950: '#022c22'
+                            500: '#059669',
+                            600: '#047857',
+                            750: '#065f46',
+                            900: '#022c22'
                         }
                     }
                 }
@@ -26,45 +25,45 @@
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(51, 65, 85, 0.6);
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .portal-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
         }
     </style>
 </head>
-<body class="bg-slate-950 min-h-screen text-slate-100 antialiased font-sans custom-scrollbar selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-100 min-h-screen text-slate-800 antialiased font-sans custom-scrollbar selection:bg-emerald-600 selection:text-white">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-6 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Official Header Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-45 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-900/30 border border-emerald-400/30">
+                <div class="w-11 h-11 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xl shadow-md border border-emerald-800">
                     🇳🇬
                 </div>
                 <div>
                     <div class="flex items-center gap-2.5">
-                        <h1 class="text-lg font-black tracking-wide text-white uppercase">Gembu Constituency Situation Room</h1>
-                        <span id="connectionBadge" class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                        <h1 class="text-base md:text-lg font-extrabold tracking-tight text-slate-900 uppercase">Gembu Constituency Results Portal</h1>
+                        <span id="connectionBadge" class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE
                         </span>
                     </div>
-                    <p class="text-xs text-emerald-400 font-semibold mt-0.5 flex items-center gap-2">
-                        <span>📍 Collation Center: <strong>GSSS Gembu</strong></span>
-                        <span class="text-slate-500">•</span>
-                        <span class="text-slate-300">Wards: Gembu A, Gembu B, Mayo Ndaga, Titong</span>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-2">
+                        <span>Collation Center: <strong>GSSS Gembu</strong></span>
+                        <span class="text-slate-300">•</span>
+                        <span>Wards: Gembu A, Gembu B, Mayo Ndaga, Titong</span>
                     </p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3 flex-wrap">
                 <!-- Ward Filter Dropdown -->
-                <div class="flex items-center bg-slate-950/80 rounded-lg px-3 py-1.5 border border-slate-800 shadow-inner">
-                    <label for="wardFilter" class="text-xs text-slate-400 mr-2 font-medium">Ward Scope:</label>
-                    <select id="wardFilter" onchange="filterResults()" class="bg-slate-900 text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer py-1 rounded border border-slate-700/60 focus:border-emerald-500">
+                <div class="flex items-center bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200">
+                    <label for="wardFilter" class="text-xs text-slate-600 mr-2 font-medium">Ward Scope:</label>
+                    <select id="wardFilter" onchange="filterResults()" class="bg-white text-slate-800 text-xs font-semibold focus:outline-none cursor-pointer py-1 px-2 rounded border border-slate-300 focus:border-emerald-600">
                         <option value="ALL">All 4 Wards (149 PUs)</option>
                         <option value="Gembu A">Gembu A Ward</option>
                         <option value="Gembu B">Gembu B Ward</option>
@@ -74,13 +73,13 @@
                 </div>
 
                 <!-- Export CSV Button -->
-                <button onclick="exportCsv()" class="bg-amber-600/90 hover:bg-amber-500 border border-amber-500/40 px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-lg shadow-amber-950/40 text-white flex items-center gap-1.5 cursor-pointer">
+                <button onclick="exportCsv()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     Export CSV
                 </button>
 
                 <!-- Manual Refresh Button -->
-                <button onclick="fetchResults()" class="bg-emerald-600/90 hover:bg-emerald-500 border border-emerald-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-950/40 text-white flex items-center gap-1.5 cursor-pointer">
+                <button onclick="fetchResults()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Refresh
                 </button>
@@ -91,41 +90,65 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-        <!-- Top Macro Cards -->
+        <!-- Top Macro Cards (2x2 Grid Layout with Progress Bar) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-slate-800/20 rounded-full blur-xl group-hover:bg-slate-700/30 transition"></div>
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Reporting Polling Units</span>
-                <div class="flex items-baseline justify-between mt-3">
-                    <span id="totalUnits" class="text-3xl font-black text-white">0 / 149</span>
-                    <span id="reportingPercentage" class="text-xs text-emerald-400 font-bold">0%</span>
+            <!-- Card 1: Reporting Units -->
+            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
+                <div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Reporting Polling Units</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="totalUnits" class="text-3xl font-black text-slate-900">0 / 149</span>
+                        <span id="reportingPercentage" class="text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">0%</span>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-100 rounded-full h-2 mt-4 overflow-hidden border border-slate-200">
+                    <div id="reportingProgressBar" class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
 
-            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-emerald-900/30 hover:border-emerald-700/50 transition">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
-                <span class="text-[11px] font-bold text-emerald-400/90 uppercase tracking-wider">Total BVAS Accredited</span>
-                <div class="flex items-baseline justify-between mt-3">
-                    <span id="totalBvasAccredited" class="text-3xl font-black text-emerald-400">0</span>
-                    <span class="text-xs text-emerald-500/80 font-medium">Gembu Constituency</span>
+            <!-- Card 2: BVAS Accredited -->
+            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
+                <div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total BVAS Accredited</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="totalBvasAccredited" class="text-3xl font-black text-slate-900">0</span>
+                        <span class="text-xs text-slate-500 font-medium">Gembu Constituency</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
+                    <span>Accreditation Verified</span>
+                    <span class="text-emerald-700 font-bold">100% Secure</span>
                 </div>
             </div>
 
-            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-sky-900/30 hover:border-sky-700/50 transition">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-sky-500/10 rounded-full blur-xl group-hover:bg-sky-500/20 transition"></div>
-                <span class="text-[11px] font-bold text-sky-400/90 uppercase tracking-wider">Total Votes Cast</span>
-                <div class="flex items-baseline justify-between mt-3">
-                    <span id="totalVotesCast" class="text-3xl font-black text-sky-400">0</span>
-                    <span id="rejectedVotesTotal" class="text-xs text-slate-400 font-medium">(Rej: 0)</span>
+            <!-- Card 3: Total Votes Cast -->
+            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
+                <div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Votes Cast</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="totalVotesCast" class="text-3xl font-black text-slate-900">0</span>
+                        <span id="rejectedVotesTotal" class="text-xs text-slate-500 font-medium">(Rej: 0)</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
+                    <span>Valid Ballots Recorded</span>
+                    <span class="text-slate-700 font-bold">EC8A Collated</span>
                 </div>
             </div>
 
-            <div class="glass-card p-5 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group border-rose-900/40 hover:border-rose-700/60 transition">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition"></div>
-                <span class="text-[11px] font-bold text-rose-400/90 uppercase tracking-wider">Forensic Flags</span>
-                <div class="flex items-baseline justify-between mt-3">
-                    <span id="overVotingCount" class="text-3xl font-black text-rose-500">0</span>
-                    <span class="text-xs text-rose-400/80 font-medium">Over-Voting Alerts</span>
+            <!-- Card 4: Audit & Over-Voting Flags -->
+            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
+                <div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Audit & Security Flags</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="overVotingCount" class="text-3xl font-black text-amber-600">0</span>
+                        <span class="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 font-bold">Over-Voting Alerts</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
+                    <span>System Integrity Check</span>
+                    <span class="text-slate-700 font-bold">Active Monitor</span>
                 </div>
             </div>
         </div>
@@ -133,10 +156,10 @@
         <!-- Visual Analytics Section (Charts) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Party Share Doughnut Chart -->
-            <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                        <span class="text-emerald-400">🍩</span> Vote Share Distribution
+            <div class="portal-card p-6 rounded-xl flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                    <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-600">🍩</span> Vote Share Distribution
                     </h2>
                 </div>
                 <div class="relative h-64 flex items-center justify-center">
@@ -145,10 +168,10 @@
             </div>
 
             <!-- Ward Turnout Bar Chart -->
-            <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800 lg:col-span-2 flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                        <span class="text-emerald-400">📈</span> Ward-by-Ward Vote Turnout
+            <div class="portal-card p-6 rounded-xl lg:col-span-2 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                    <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-600">📈</span> Ward-by-Ward Vote Turnout
                     </h2>
                 </div>
                 <div class="relative h-64">
@@ -158,37 +181,37 @@
         </div>
 
         <!-- Constituency Party Standings Grid -->
-        <div class="glass-card p-6 rounded-2xl shadow-xl border border-slate-800">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-slate-800/80 pb-4">
-                <h2 class="text-base font-bold text-white flex items-center gap-2">
-                    <span class="text-emerald-400">📊</span> Cumulative Constituency Party Standings 
-                    <span class="text-xs font-normal text-slate-400">(4 Wards Overview)</span>
+        <div class="portal-card p-6 rounded-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-slate-100 pb-4">
+                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <span class="text-emerald-600">📊</span> Cumulative Constituency Party Standings 
+                    <span class="text-xs font-normal text-slate-500">(4 Wards Overview)</span>
                 </h2>
-                <span id="constituencyLeaderBadge" class="self-start sm:self-auto bg-emerald-950 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/30">
+                <span id="constituencyLeaderBadge" class="self-start sm:self-auto bg-emerald-50 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold border border-emerald-200">
                     Leading: Pending
                 </span>
             </div>
             <div id="constituencyPartyGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div class="text-xs text-slate-500 col-span-full py-4 text-center">Calculating Ward totals...</div>
+                <div class="text-xs text-slate-400 col-span-full py-4 text-center">Calculating Ward totals...</div>
             </div>
         </div>
 
         <!-- Ward-Level Summary Cards -->
         <div class="space-y-4">
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span class="text-emerald-400">🏘️</span> 4-Ward Collation Summary (Gembu A, Gembu B, Mayo Ndaga, Titong)
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="text-emerald-600">🏘️</span> 4-Ward Collation Summary (Gembu A, Gembu B, Mayo Ndaga, Titong)
             </h2>
             <div id="wardSummaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Rendered dynamically -->
             </div>
         </div>
 
-        <!-- Polling Unit Data Table -->
-        <div class="glass-card rounded-2xl shadow-xl overflow-hidden border border-slate-800">
-            <div class="px-6 py-5 border-b border-slate-800 flex flex-col md:flex-row justify-between items-md-center gap-4 bg-slate-900/40">
+        <!-- Polling Unit Data Feed (Dropdown Accordion Layout) -->
+        <div class="portal-card rounded-xl overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-md-center gap-4 bg-slate-50">
                 <div>
-                    <h2 class="font-bold text-white text-base">Polling Unit Feed (149 Total Units)</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Live EC8A verification feeds transmitting to GSSS Gembu Collation Center</p>
+                    <h2 class="font-bold text-slate-900 text-base">Polling Unit Feed (149 Total Units)</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Tap any unit row to inspect party breakdown, EC8A photo evidence, and forensic security hashes</p>
                 </div>
                 
                 <!-- Quick Search Input -->
@@ -198,51 +221,35 @@
                         id="searchInput" 
                         onkeyup="filterResults()" 
                         placeholder="Search PU Code or Ward Name..." 
-                        class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-inner"
+                        class="w-full text-xs bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 shadow-sm"
                     />
                 </div>
             </div>
 
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800">
-                            <th class="px-6 py-4 font-bold">PU ID / Ward</th>
-                            <th class="px-6 py-4 font-bold">EC8A Sheet</th>
-                            <th class="px-6 py-4 font-bold">BVAS / Votes</th>
-                            <th class="px-6 py-4 font-bold">Party Breakdown</th>
-                            <th class="px-6 py-4 font-bold">Forensic Security</th>
-                            <th class="px-6 py-4 font-bold">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsTableBody" class="divide-y divide-slate-800/60 text-sm">
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 font-medium">
-                                Loading Gembu constituency feeds...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="divide-y divide-slate-100" id="resultsAccordionContainer">
+                <div class="px-6 py-12 text-center text-slate-400 font-medium">
+                    Loading Gembu constituency feeds...
+                </div>
             </div>
         </div>
 
     </main>
 
     <!-- EC8A Full Preview Modal -->
-    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-card bg-slate-900/90 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-700">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div>
-                    <h3 id="modalPuTitle" class="font-bold text-white text-base">EC8A Sheet Evidence — GSSS Gembu Center</h3>
-                    <p id="modalHashText" class="text-xs font-mono text-emerald-400 font-semibold truncate max-w-md mt-0.5"></p>
+                    <h3 id="modalPuTitle" class="font-bold text-slate-900 text-base">EC8A Sheet Evidence — GSSS Gembu Center</h3>
+                    <p id="modalHashText" class="text-xs font-mono text-emerald-700 font-semibold truncate max-w-md mt-0.5"></p>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1 cursor-pointer transition">✕</button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1 cursor-pointer transition">✕</button>
             </div>
-            <div class="bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center max-h-[70vh] border border-slate-800 p-2">
-                <img id="modalImage" src="" alt="Full EC8A Result Sheet" class="max-h-[68vh] w-auto object-contain rounded-lg">
+            <div class="bg-slate-950 rounded-lg overflow-hidden flex items-center justify-center max-h-[70vh] border border-slate-800 p-2">
+                <img id="modalImage" src="" alt="Full EC8A Result Sheet" class="max-h-[68vh] w-auto object-contain rounded">
             </div>
             <div class="flex justify-end">
-                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer border border-slate-700">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer">
                     Close Inspector
                 </button>
             </div>
@@ -266,21 +273,19 @@
                 
                 cachedGlobalData = data.results || [];
                 
-                badge.className = "inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase";
-                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE`;
+                badge.className = "inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE`;
                 
                 renderDashboard(cachedGlobalData);
             } catch (error) {
                 console.error('Failed to connect to backend:', error);
-                badge.className = "inline-flex items-center gap-1.5 bg-rose-500/10 text-rose-400 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-rose-500/30 uppercase";
-                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> OFFLINE`;
+                badge.className = "inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-rose-200 uppercase";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> OFFLINE`;
                 
-                document.getElementById('resultsTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-rose-400 font-medium bg-rose-950/20">
-                            Connection error! Check Node.js server connection at GSSS Gembu Command Hub.
-                        </td>
-                    </tr>`;
+                document.getElementById('resultsAccordionContainer').innerHTML = `
+                    <div class="px-6 py-10 text-center text-rose-600 font-medium bg-rose-50">
+                        Connection error! Check Node.js server connection at GSSS Gembu Command Hub.
+                    </div>`;
             }
         }
 
@@ -301,6 +306,18 @@
 
         function closeModal() {
             document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function toggleDropdown(id) {
+            const content = document.getElementById(`dropdown_${id}`);
+            const chevron = document.getElementById(`chevron_${id}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+            }
         }
 
         function renderDashboard(resultsArray) {
@@ -353,6 +370,7 @@
             document.getElementById('totalUnits').innerText = `${filteredResults.length} / ${TOTAL_CONSTITUENCY_PUS}`;
             const reportingPct = Math.round((filteredResults.length / TOTAL_CONSTITUENCY_PUS) * 100);
             document.getElementById('reportingPercentage').innerText = `${reportingPct}% Reported`;
+            document.getElementById('reportingProgressBar').style.width = `${reportingPct}%`;
             
             document.getElementById('totalBvasAccredited').innerText = totalBvas.toLocaleString();
             document.getElementById('totalVotesCast').innerText = totalVotes.toLocaleString();
@@ -372,16 +390,16 @@
                 sortedPartyCumulative.forEach(([party, votes], idx) => {
                     const isTop = idx === 0;
                     partyGrid.innerHTML += `
-                        <div class="p-3 rounded-xl border ${isTop ? 'bg-emerald-950/40 border-emerald-500/50 text-white shadow-lg shadow-emerald-950/50' : 'bg-slate-900/60 border-slate-800 text-slate-300'}">
+                        <div class="p-3 rounded-lg border ${isTop ? 'bg-emerald-50 border-emerald-300 text-slate-900 shadow-sm' : 'bg-white border-slate-200 text-slate-700'}">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold ${isTop ? 'text-emerald-300' : 'text-slate-400'}">${party}</span>
-                                <span class="font-black ${isTop ? 'text-emerald-400' : 'text-slate-200'}">${votes.toLocaleString()}</span>
+                                <span class="font-bold ${isTop ? 'text-emerald-800' : 'text-slate-600'}">${party}</span>
+                                <span class="font-extrabold ${isTop ? 'text-emerald-700' : 'text-slate-900'}">${votes.toLocaleString()}</span>
                             </div>
                         </div>
                     `;
                 });
             } else {
-                partyGrid.innerHTML = `<div class="text-xs text-slate-500 col-span-full py-2 text-center">No scores recorded yet.</div>`;
+                partyGrid.innerHTML = `<div class="text-xs text-slate-400 col-span-full py-2 text-center">No scores recorded yet.</div>`;
             }
 
             const wardGrid = document.getElementById('wardSummaryGrid');
@@ -394,86 +412,132 @@
 
                 let partySummary = sortedParties.slice(0, 4)
                     .map(([p, v], index) => `
-                        <div class="flex justify-between text-xs py-1 ${index === 0 ? 'font-bold text-emerald-400 bg-emerald-950/40 px-2 rounded-md border border-emerald-800/40' : 'text-slate-400'}">
+                        <div class="flex justify-between text-xs py-1 ${index === 0 ? 'font-bold text-emerald-800 bg-emerald-50 px-2 rounded border border-emerald-200' : 'text-slate-600'}">
                             <span>${index + 1}. ${p}:</span> 
                             <span>${v.toLocaleString()} v</span>
                         </div>`)
                     .join('');
 
                 let card = `
-                    <div class="glass-card p-5 rounded-2xl shadow-lg flex flex-col justify-between border border-slate-800 hover:border-slate-700 transition">
+                    <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <h3 class="font-bold text-white text-base">${wardName}</h3>
+                                    <h3 class="font-bold text-slate-900 text-base">${wardName}</h3>
                                     <span class="text-[10px] text-slate-400">${stats.units} PUs Reporting</span>
                                 </div>
-                                <span class="bg-emerald-950 text-emerald-300 text-[11px] px-2 py-0.5 rounded-md font-bold border border-emerald-700/50">1st: ${leadingParty} (${leadingVotes}v)</span>
+                                <span class="bg-emerald-50 text-emerald-800 text-[11px] px-2 py-0.5 rounded font-bold border border-emerald-200">1st: ${leadingParty} (${leadingVotes}v)</span>
                             </div>
-                            <div class="space-y-1 border-t border-slate-800/80 pt-2.5 mb-3">
-                                ${partySummary || '<span class="text-xs text-slate-500">Awaiting ward data</span>'}
+                            <div class="space-y-1 border-t border-slate-100 pt-2.5 mb-3">
+                                ${partySummary || '<span class="text-xs text-slate-400">Awaiting ward data</span>'}
                             </div>
                         </div>
-                        <div class="flex justify-between items-center text-xs border-t border-slate-800/80 pt-2.5">
-                            <span class="text-slate-400">Flags: <strong class="${stats.overVotes > 0 ? 'text-rose-400' : 'text-slate-200'}">${stats.overVotes}</strong></span>
-                            <span class="text-slate-400">Total: <strong class="text-white">${stats.totalVotes.toLocaleString()}</strong></span>
+                        <div class="flex justify-between items-center text-xs border-t border-slate-100 pt-2.5">
+                            <span class="text-slate-500">Flags: <strong class="${stats.overVotes > 0 ? 'text-amber-600' : 'text-slate-700'}">${stats.overVotes}</strong></span>
+                            <span class="text-slate-500">Total: <strong class="text-slate-900">${stats.totalVotes.toLocaleString()}</strong></span>
                         </div>
                     </div>
                 `;
                 wardGrid.innerHTML += card;
             });
 
-            const tbody = document.getElementById('resultsTableBody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('resultsAccordionContainer');
+            container.innerHTML = '';
 
             if (filteredResults.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-500 font-medium">No polling unit records found for Gembu Constituency.</td></tr>`;
+                container.innerHTML = `<div class="px-6 py-10 text-center text-slate-400 font-medium">No polling unit records found for Gembu Constituency.</div>`;
             } else {
-                filteredResults.forEach(res => {
-                    let scoresHtml = Object.entries(res.scores || {})
-                        .map(([party, votes]) => `<span class="inline-block bg-slate-900 border border-slate-700 px-2 py-0.5 rounded-md mr-1 mb-1 text-[11px] font-medium text-slate-300"><strong class="text-emerald-400">${party}</strong>: ${votes}</span>`)
-                        .join('');
+                filteredResults.forEach((res, index) => {
+                    const sortedPuParties = Object.entries(res.scores || {}).sort((a, b) => b[1] - a[1]);
+                    const leadingPartyName = sortedPuParties.length > 0 ? sortedPuParties[0][0] : 'None';
+                    const leadingPartyVotes = sortedPuParties.length > 0 ? sortedPuParties[0][1] : 0;
+
+                    let partyRows = sortedPuParties
+                        .map(([party, votes]) => `
+                            <div class="flex justify-between items-center bg-white px-3 py-1.5 rounded border border-slate-200 text-xs">
+                                <span class="font-bold text-slate-700">${party}</span>
+                                <span class="font-extrabold text-emerald-700">${votes.toLocaleString()} votes</span>
+                            </div>
+                        `).join('');
 
                     let flagsHtml = '';
                     if (res.forensic_flags && res.forensic_flags.length > 0) {
-                        flagsHtml = res.forensic_flags.map(f => `<span class="block text-[10px] bg-amber-950/80 text-amber-300 border border-amber-700/50 px-2 py-0.5 rounded-md mt-1 font-bold">⚡ ${f}</span>`).join('');
+                        flagsHtml = res.forensic_flags.map(f => `<div class="text-xs bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1.5 rounded font-bold">⚡ ${f}</div>`).join('');
                     }
 
-                    let photoHtml = `<span class="text-xs text-slate-500 italic">No Photo</span>`;
+                    let photoSection = `<span class="text-xs text-slate-400 italic">No EC8A Sheet Attached</span>`;
                     if (res.photo_url) {
                         const fullPhotoUrl = `${BACKEND_URL}${res.photo_url}`;
-                        photoHtml = `
-                            <button onclick="openModal('${fullPhotoUrl}', '${res.pu_id}', '${res.photo_hash || ''}')" class="focus:outline-none cursor-pointer group">
-                                <img src="${fullPhotoUrl}" alt="EC8A Sheet" class="w-11 h-11 object-cover rounded-lg border border-slate-700 group-hover:border-emerald-500 shadow-md transition">
-                            </button>
+                        photoSection = `
+                            <div class="flex items-center justify-between bg-white p-3 rounded border border-slate-200">
+                                <div class="flex items-center gap-3">
+                                    <img src="${fullPhotoUrl}" alt="EC8A Sheet" class="w-12 h-12 object-cover rounded border border-slate-300 shadow-sm">
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-900 block">EC8A Result Sheet Verified</span>
+                                        <span class="text-[10px] font-mono text-emerald-700">Hash: ${res.photo_hash ? res.photo_hash.substring(0, 16) + '...' : 'Available'}</span>
+                                    </div>
+                                </div>
+                                <button onclick="openModal('${fullPhotoUrl}', '${res.pu_id}', '${res.photo_hash || ''}')" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3 py-2 rounded transition cursor-pointer">
+                                    View Full Sheet ➔
+                                </button>
+                            </div>
                         `;
                     }
 
-                    let row = `
-                        <tr class="hover:bg-slate-900/60 transition">
-                            <td class="px-6 py-4">
-                                <span class="font-bold text-white block">#${res.pu_id}</span>
-                                <span class="text-xs text-emerald-400 font-bold">${res.ward || 'Gembu A'}</span>
-                            </td>
-                            <td class="px-6 py-4">${photoHtml}</td>
-                            <td class="px-6 py-4">
-                                <span class="block text-xs text-slate-400">BVAS: <strong class="text-white">${res.bvas_accredited}</strong></span>
-                                <span class="block text-xs text-slate-300 font-medium">Votes: <strong class="text-white">${res.total_votes}</strong> <span class="text-slate-500">(Rej: ${res.rejected_votes})</span></span>
-                            </td>
-                            <td class="px-6 py-4 max-w-xs">${scoresHtml}</td>
-                            <td class="px-6 py-4">
-                                <span class="block text-[11px] font-mono text-slate-400 truncate max-w-[130px]" title="${res.photo_hash || ''}">Hash: ${res.photo_hash ? res.photo_hash.substring(0, 10) + '...' : 'N/A'}</span>
-                                <span class="block text-[11px] text-slate-500">GPS: ${res.location?.latitude?.toFixed(4) || 0}, ${res.location?.longitude?.toFixed(4) || 0}</span>
-                                ${flagsHtml}
-                            </td>
-                            <td class="px-6 py-4">
-                                ${res.is_over_voting 
-                                    ? '<span class="bg-rose-950/80 text-rose-300 text-[11px] px-2.5 py-1 rounded-full font-extrabold border border-rose-700/60 shadow-sm">⚠️ OVER-VOTING</span>' 
-                                    : '<span class="bg-emerald-950/80 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold border border-emerald-700/60 shadow-sm">✓ VERIFIED</span>'}
-                            </td>
-                        </tr>
+                    let accordionItem = `
+                        <div class="transition hover:bg-slate-50/80">
+                            <!-- Main Visible Row (Tap to expand) -->
+                            <div onclick="toggleDropdown(${index})" class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer select-none">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-800 font-bold text-xs">
+                                        #${res.pu_id}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-slate-900 text-sm">PU #${res.pu_id} - ${res.ward || 'Gembu A'}</span>
+                                            ${res.is_over_voting ? '<span class="bg-amber-50 text-amber-800 text-[10px] px-2 py-0.5 rounded font-bold border border-amber-200">OVER-VOTING</span>' : '<span class="bg-emerald-50 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold border border-emerald-200">VERIFIED</span>'}
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-0.5">
+                                            BVAS: <strong class="text-slate-800">${res.bvas_accredited}</strong> | Total Votes: <strong class="text-slate-800">${res.total_votes}</strong> (Rej: ${res.rejected_votes})
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                                    <div class="text-left sm:text-right">
+                                        <span class="text-[10px] text-slate-400 block uppercase font-semibold">Leading Party</span>
+                                        <span class="text-xs font-bold text-emerald-700">${leadingPartyName} (${leadingPartyVotes}v)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-xs text-emerald-700 font-bold bg-white px-3 py-1.5 rounded border border-slate-200 shadow-sm">
+                                        <span>Tap for breakdown</span>
+                                        <svg id="chevron_${index}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden Dropdown Details -->
+                            <div id="dropdown_${index}" class="hidden px-6 pb-5 pt-2 bg-slate-50 border-t border-slate-100 space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Complete Party Breakdown</h4>
+                                        <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                                            ${partyRows || '<span class="text-xs text-slate-400">No party votes recorded</span>'}
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <h4 class="text-xs font-bold text-slate-700 uppercase">Collation Evidence & Security</h4>
+                                        ${photoSection}
+                                        ${flagsHtml}
+                                        <div class="text-[11px] text-slate-500 bg-white p-2.5 rounded border border-slate-200 flex justify-between shadow-sm">
+                                            <span>GPS Location: <strong>${res.location?.latitude?.toFixed(4) || 0}, ${res.location?.longitude?.toFixed(4) || 0}</strong></span>
+                                            <span>Logged: <strong>${new Date(res.timestamp).toLocaleTimeString()}</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     `;
-                    tbody.innerHTML += row;
+                    container.innerHTML += accordionItem;
                 });
             }
         }
@@ -494,9 +558,9 @@
                         labels: parties.length ? parties : ['Pending'],
                         datasets: [{
                             data: partyVotes.length ? partyVotes : [1],
-                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#065f46'],
+                            backgroundColor: ['#047857', '#2563eb', '#d97706', '#db2777', '#7c3aed', '#64748b', '#065f46'],
                             borderWidth: 2,
-                            borderColor: '#0f172a'
+                            borderColor: '#ffffff'
                         }]
                     },
                     options: {
@@ -505,7 +569,7 @@
                         plugins: {
                             legend: {
                                 position: 'bottom',
-                                labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12 }
+                                labels: { color: '#475569', font: { size: 10 }, boxWidth: 12 }
                             }
                         }
                     }
@@ -528,7 +592,7 @@
                         datasets: [{
                             label: 'Total Votes Cast',
                             data: wardTurnoutVotes,
-                            backgroundColor: '#10b981',
+                            backgroundColor: '#047857',
                             borderRadius: 6,
                             borderSkipped: false
                         }]
@@ -537,8 +601,8 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
-                            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
-                            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+                            x: { grid: { display: false }, ticks: { color: '#475569', font: { size: 11 } } },
+                            y: { grid: { color: '#f1f5f9' }, ticks: { color: '#475569', font: { size: 11 } } }
                         },
                         plugins: {
                             legend: { display: false }

@@ -209,7 +209,6 @@
         const AUTHORIZED_PIN = "2027";
         const partiesList = ['A', 'AA', 'AAC', 'ADC', 'ADP', 'APC', 'APGA', 'APM', 'APP', 'BP', 'LP', 'NNPP', 'NRM', 'PDP', 'PRP', 'SDP', 'YPP', 'ZLP'];
 
-        // Check if session was already authenticated
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('gembu_situation_room_auth') === 'true') {
                 document.getElementById('authModal').classList.add('hidden');
@@ -239,7 +238,6 @@
             document.getElementById('authError').classList.add('hidden');
         }
 
-        // Allow pressing Enter to submit PIN
         document.getElementById('pinInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 verifyPin();
