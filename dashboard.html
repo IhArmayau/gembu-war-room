@@ -1,535 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titong Collation Centre | Gembu Constituency 2027</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .portal-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gembu Constituency - State Assembly Election Results</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#f6f7f5;color:#111}
+.top{background:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:20}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:50%;background:#0a5c36;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logo-row b{font-size:15px;line-height:1.1;display:block}
+.logo-row span{font-size:12px;color:#666}
+.hero{background:#0a5c36;color:#fff;padding:22px 16px 20px}
+.live{color:#7dd8a8;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.live i{width:8px;height:8px;background:#ff4d4d;border-radius:50%;display:inline-block}
+.hero h1{font-size:32px;line-height:1.05;margin:10px 0 6px;font-weight:800}
+.hero p{color:#d6e8dd;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.card{background:#126b42;border-radius:14px;padding:14px}
+.card b{font-size:26px;display:block}
+.card span{font-size:13px;color:#cfe6d8;display:block;margin-top:6px}
+.progress{height:8px;background:#0a4a2d;border-radius:20px;margin-top:16px;overflow:hidden}
+.progress div{height:100%;background:#2ea8ff;width:28.2%}
+.progress-text{font-size:13px;color:#cfe6d8;margin-top:8px}
+.controls{display:flex;gap:10px;padding:12px 12px 0}
+.controls select,.controls button{flex:1;padding:11px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:600}
+.controls button{background:#0a5c36;color:#fff;border:none}
+.section{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.section small{color:#0a5c36;font-weight:700;font-size:13px}
+.section h2{font-size:22px;margin-top:2px}
+.badge{background:#e6f4ee;color:#0a5c36;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.party{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f0f0}
+.party:last-child{border:none}
+.party-info{flex:1}
+.bar{height:8px;background:#eee;border-radius:20px;margin-top:6px;overflow:hidden}
+.bar div{height:100%;background:#0a5c36}
+.candidate{display:flex;gap:12px;align-items:center;background:#f9faf9;padding:12px;border-radius:12px;margin-top:14px}
+.candidate img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #0a5c36}
+.candidate b{font-size:14px}
+.candidate span{font-size:12px;color:#666;display:block}
+.ward-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ward-grid button{background:#0a1f44;color:#fff;padding:16px;border-radius:12px;text-align:left;border:none;cursor:pointer}
+.ward-grid button b{display:block}
+.ward-grid button span{color:#d4a017;font-size:12px}
+.pu{border-bottom:1px solid #f0f0f0;padding:14px 0;cursor:pointer}
+.pu b{font-size:14px}
+.pu p{font-size:12px;color:#666}
+.pu-detail{display:none;background:#f8faf8;padding:12px;border-radius:10px;margin-top:10px;font-size:13px}
+.footer{text-align:center;padding:16px;font-size:11px;color:#999}
+</style>
 </head>
-<body class="bg-[#F5F7FA] min-h-screen text-[#111111] antialiased font-sans custom-scrollbar selection:bg-[#D4A017] selection:text-[#0A1F44]">
+<body>
 
-    <!-- Top Header -->
-    <header class="bg-[#0A1F44] border-b border-[#D4A017]/30 sticky top-0 z-40 shadow-lg text-white">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-xl font-black tracking-tight text-[#D4A017] uppercase">Titong Collation Centre</h1>
-                <p class="text-xs text-slate-300 font-medium mt-0.5">Gembu Constituency • Taraba State House of Assembly • 2027</p>
-                <p class="text-xs italic text-slate-300 mt-0.5 font-medium">"Together For A Greater Gembu!"</p>
-                <p id="liveStatusText" class="text-[11px] text-[#D4A017] font-semibold mt-1 flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#D4A017] animate-pulse"></span> ● LIVE - Updated 7:30 AM - Refreshes every minute
-                </p>
-            </div>
-            
-            <div class="flex items-center gap-3 flex-wrap w-full md:w-auto justify-start md:justify-end">
-                <!-- Ward Filter Dropdown -->
-                <div class="flex items-center bg-slate-900/80 rounded-lg px-3 py-1.5 border border-slate-700">
-                    <label for="wardFilter" class="text-xs text-slate-300 mr-2 font-medium">Ward:</label>
-                    <select id="wardFilter" onchange="filterResults()" class="bg-[#0A1F44] text-white text-xs font-semibold focus:outline-none cursor-pointer py-1 px-2 rounded border border-[#D4A017]/50 focus:border-[#D4A017]">
-                        <option value="ALL">All 4 Wards (149 PUs)</option>
-                        <option value="Gembu A">Gembu A Ward</option>
-                        <option value="Gembu B">Gembu B Ward</option>
-                        <option value="Mayo Ndaga">Mayo Ndaga Ward</option>
-                        <option value="Titong">Titong Ward ⭐</option>
-                    </select>
-                </div>
+<div class="top">
+  <div class="logo-row"><div class="logo">TS</div><div><b>Gembu Constituency</b><span>State Assembly election results</span></div></div>
+  <div>☰</div>
+</div>
 
-                <!-- Export CSV Button -->
-                <button onclick="exportCsv()" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-2 rounded-lg text-xs font-semibold transition shadow-sm border border-slate-700 flex items-center gap-1.5 cursor-pointer">
-                    <svg class="w-3.5 h-3.5 text-[#D4A017]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Export CSV
-                </button>
+<div class="hero">
+  <div class="live"><i></i> LIVE RESULTS • UPDATES EVERY MINUTE</div>
+  <h1>Gembu<br>Constituency</h1>
+  <p>Gembu A • Gembu B • Mayo Ndaga • Titong</p>
+  <div class="grid">
+    <div class="card"><b>4</b><span>Wards</span></div>
+    <div class="card"><b>149</b><span>Polling Units</span></div>
+    <div class="card"><b><span id="heroPUs">42</span> / 149</b><span>Polling units reported</span></div>
+    <div class="card"><b id="heroTotalVotes">12,026</b><span>Total votes counted</span></div>
+  </div>
+  <div class="progress"><div id="heroProgressBar"></div></div>
+  <div class="progress-text"><span id="heroProgressText">42 / 149 PUs - 28.2% Reported</span> • <span id="heroLeaderText">APC is Leading + 4,180 votes ahead (56.9%)</span></div>
+</div>
 
-                <!-- Manual Refresh Button -->
-                <button onclick="fetchResults()" class="bg-[#D4A017] hover:bg-[#b8860b] text-[#0A1F44] px-3.5 py-2 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Refresh
-                </button>
-            </div>
-        </div>
-    </header>
+<div class="controls">
+  <select id="wardFilter" onchange="filterResults()">
+    <option value="ALL">All 4 Wards (149 PUs)</option>
+    <option value="Gembu A">Gembu A Ward</option>
+    <option value="Gembu B">Gembu B Ward</option>
+    <option value="Mayo Ndaga">Mayo Ndaga Ward</option>
+    <option value="Titong">Titong Ward ⭐</option>
+  </select>
+  <button onclick="exportCsv()">Export CSV</button>
+  <button onclick="fetchResults()">Refresh</button>
+</div>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+    <div><small>Constituency total</small><h2>Votes by party</h2></div>
+    <div class="badge" id="leadingBadge">● APC leading</div>
+  </div>
+  <div id="topPartiesGrid" style="margin-top:12px;"></div>
+  <div class="candidate">
+    <img src="/titong.jpg" onerror="this.style.display='none'" alt="Hon. Titong">
+    <div><b>Hon. Abdul-Azeez Sulieman Titong</b><span>APC • Candidate for Member, Gembu Constituency</span><span style="color:#0a5c36;font-weight:700;margin-top:2px;" id="leadText2">APC is Leading</span></div>
+  </div>
+</div>
 
-        <!-- Candidate Card (Real Local Photo Asset Tag + Fallback + Gold Ticks) -->
-        <div class="bg-[#0A1F44] border border-[#D4A017]/40 p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden">
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-[#D4A017]/10 rounded-full blur-2xl"></div>
-            <!-- Passport Size Photo Container -->
-            <div class="w-20 h-24 sm:w-24 sm:h-28 rounded-lg bg-slate-800 border-2 border-[#D4A017] flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
-                <img src="titong.jpg" onerror="this.src='https://via.placeholder.com/150x180/0A1F44/D4A017?text=HON+TITONG'" alt="Hon. Abdul-Azeez Sulieman Titong" class="w-full h-full object-cover">
-            </div>
-            <div class="space-y-1.5 text-center sm:text-left relative z-10">
-                <h2 class="text-lg sm:text-xl font-black text-[#D4A017] uppercase tracking-wide">HON. ABDUL-AZEEZ SULIEMAN TITONG</h2>
-                <p class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">APC Candidate for Member, Gembu Constituency</p>
-                <div class="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-xs text-slate-200 pt-1">
-                    <span class="flex items-center gap-1 font-semibold"><span class="text-[#D4A017]">✓</span> Experienced Leadership</span>
-                    <span class="flex items-center gap-1 font-semibold"><span class="text-[#D4A017]">✓</span> Proven Track Record</span>
-                    <span class="flex items-center gap-1 font-semibold"><span class="text-[#D4A017]">✓</span> People Focused</span>
-                    <span class="flex items-center gap-1 font-semibold"><span class="text-[#D4A017]">✓</span> Development Driven</span>
-                </div>
-            </div>
-        </div>
+<div class="section">
+  <small>Ward Breakdown</small>
+  <h2 style="font-size:18px;margin-top:4px;">Tap a ward to filter results</h2>
+  <div class="ward-grid" id="wardSummaryGrid"></div>
+  <p style="font-size:11px;color:#888;margin-top:8px;">■ Navy = APC Leading &nbsp; ■ Gold Border = Home Ward (Titong)</p>
+</div>
 
-        <!-- Results Hero Card -->
-        <div class="portal-card p-6 rounded-2xl bg-gradient-to-r from-[#0A1F44] to-slate-900 text-white shadow-xl relative overflow-hidden border border-[#D4A017]/30">
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-[#D4A017]/10 rounded-full blur-2xl"></div>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-                <div class="space-y-2">
-                    <div class="flex items-center gap-3">
-                        <span id="heroTotalVotes" class="text-4xl font-black tracking-tight text-[#D4A017]">12,026</span>
-                        <span class="text-xs uppercase tracking-wider bg-[#D4A017]/20 text-[#D4A017] font-bold px-2.5 py-1 rounded-md border border-[#D4A017]/30">TOTAL VOTES COUNTED</span>
-                    </div>
-                    <p id="heroLeaderText" class="text-sm md:text-base font-semibold text-emerald-300">
-                        APC is Leading + 4,180 votes ahead (56.9%)
-                    </p>
-                </div>
+<div class="section">
+  <small>Visual Analytics</small>
+  <h2 style="font-size:18px;">Vote Share & Ward Turnout</h2>
+  <div style="height:200px;margin-top:12px;"><canvas id="partyShareChart"></canvas></div>
+  <div style="height:200px;margin-top:16px;"><canvas id="wardTurnoutChart"></canvas></div>
+</div>
 
-                <div class="w-full md:w-80 bg-slate-950/60 p-4 rounded-xl border border-slate-700/60 backdrop-blur-md">
-                    <div class="flex justify-between items-center text-xs mb-2">
-                        <span id="heroProgressText" class="font-bold text-slate-300">42 / 149 PUs - 28.2% Reported</span>
-                        <span id="heroStatusBadge" class="text-[10px] text-[#D4A017] font-bold uppercase">COLLATING</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                        <div id="heroProgressBar" class="bg-[#D4A017] h-2.5 rounded-full transition-all duration-500" style="width: 28.2%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="section">
+  <small>Polling Unit Feed</small>
+  <h2 style="font-size:18px;">Polling Unit Feed (149 Total Units)</h2>
+  <p style="font-size:12px;color:#777;margin-top:4px;">Tap any unit row to inspect full party breakdown & EC8A photo evidence</p>
+  <input type="text" id="searchInput" onkeyup="filterResults()" placeholder="Search PU Code or Ward Name..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:10px;">
+  <div id="resultsAccordionContainer"></div>
+</div>
 
-        <!-- Top Party Standings Grid -->
-        <div class="space-y-3">
-            <h2 class="text-base font-bold text-[#111111] flex items-center gap-2">
-                <span>🏆</span> Top Party Standings (Gembu Constituency)
-            </h2>
-            <div id="topPartiesGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="portal-card p-5 rounded-xl flex items-center justify-between border-l-4 border-l-[#008751]">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008751] font-black text-sm flex items-center justify-center border border-emerald-200 shadow-sm">APC</div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-500 uppercase">RANK #1</h4>
-                            <span class="text-2xl font-black text-[#111111]">6,838</span>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold bg-[#0A1F44] text-[#D4A017] px-2.5 py-1 rounded-md">56.9%</span>
-                </div>
+<div class="footer">Gembu Collation Centre • Data from Accredited Party Agents • Not an Official INEC Declaration • © 2026 • Updated <span id="updated">Just now</span></div>
 
-                <div class="portal-card p-5 rounded-xl flex items-center justify-between border-l-4 border-l-red-600">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-red-50 text-red-700 font-black text-sm flex items-center justify-center border border-red-200 shadow-sm">PDP</div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-500 uppercase">RANK #2</h4>
-                            <span class="text-2xl font-black text-[#111111]">2,658</span>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">22.1%</span>
-                </div>
+<!-- Modal -->
+<div id="imageModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;max-width:600px;width:100%;padding:16px;">
+    <div style="display:flex;justify-content:space-between;"><b id="modalPuTitle">EC8A Sheet</b><button onclick="closeModal()">✕</button></div>
+    <p id="modalHashText" style="font-size:11px;color:#555;"></p>
+    <img id="modalImage" style="width:100%;max-height:60vh;object-fit:contain;margin-top:10px;">
+    <div style="text-align:right;margin-top:10px;"><button onclick="closeModal()" style="background:#0a1f44;color:#fff;padding:8px 14px;border-radius:8px;border:none;">Close</button></div>
+  </div>
+</div>
 
-                <div class="portal-card p-5 rounded-xl flex items-center justify-between border-l-4 border-l-blue-600">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 font-black text-sm flex items-center justify-center border border-blue-200 shadow-sm">ADC</div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-500 uppercase">RANK #3</h4>
-                            <span class="text-2xl font-black text-[#111111]">895</span>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">7.4%</span>
-                </div>
-            </div>
-        </div>
+<script>
+let cachedGlobalData=[];
+const BACKEND_URL=window.location.origin;
+let partyShareChartInstance=null, wardTurnoutChartInstance=null;
 
-        <!-- Ward Leaders Summary Cards (Explicit APC Votes Label) -->
-        <div class="space-y-4">
-            <h2 class="text-base font-bold text-[#111111] flex items-center gap-2">
-                <span>🏘️</span> Ward Leaders (Gembu A, Gembu B, Mayo Ndaga, Titong)
-            </h2>
-            <div id="wardSummaryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="portal-card p-5 rounded-xl flex flex-col justify-between border-t-4 border-t-[#0A1F44]">
-                    <div>
-                        <h3 class="font-bold text-[#0A1F44] text-base mb-2">Gembu A</h3>
-                        <p class="text-sm font-semibold text-[#008751]">APC Leading</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-right">
-                        <span class="text-lg font-black text-[#111111]">APC: 1,948</span>
-                    </div>
-                </div>
-
-                <div class="portal-card p-5 rounded-xl flex flex-col justify-between border-t-4 border-t-[#0A1F44]">
-                    <div>
-                        <h3 class="font-bold text-[#0A1F44] text-base mb-2">Gembu B</h3>
-                        <p class="text-sm font-semibold text-[#008751]">APC Leading</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-right">
-                        <span class="text-lg font-black text-[#111111]">APC: 1,746</span>
-                    </div>
-                </div>
-
-                <div class="portal-card p-5 rounded-xl flex flex-col justify-between border-t-4 border-t-[#0A1F44]">
-                    <div>
-                        <h3 class="font-bold text-[#0A1F44] text-base mb-2">Mayo Ndaga</h3>
-                        <p class="text-sm font-semibold text-[#008751]">APC Leading</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-right">
-                        <span class="text-lg font-black text-[#111111]">APC: 1,498</span>
-                    </div>
-                </div>
-
-                <div class="portal-card p-5 rounded-xl flex flex-col justify-between border-t-4 border-t-[#D4A017] bg-amber-50/40">
-                    <div>
-                        <h3 class="font-bold text-[#0A1F44] text-base mb-2">Titong ⭐ Home Ward</h3>
-                        <p class="text-sm font-semibold text-[#008751]">APC Leading</p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-amber-200 text-right">
-                        <span class="text-lg font-black text-[#111111]">APC: 1,646</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Map Section -->
-        <div class="portal-card p-6 rounded-xl">
-            <h2 class="text-base font-bold flex items-center gap-2">🗺️ Gembu Constituency Map — 4 Wards Live</h2>
-            <p class="text-xs text-slate-500 mt-1">Tap a ward to filter results</p>
-            
-            <div class="grid grid-cols-2 gap-3 mt-4">
-                <button onclick="selectWard('Gembu A')" class="bg-[#0A1F44] text-white p-6 rounded-xl text-left hover:bg-slate-900 transition cursor-pointer">
-                    <p class="font-bold">Gembu A</p>
-                    <p class="text-xs text-[#D4A017]">APC: 1,948 votes</p>
-                </button>
-                <button onclick="selectWard('Gembu B')" class="bg-[#0A1F44] text-white p-6 rounded-xl text-left hover:bg-slate-900 transition cursor-pointer">
-                    <p class="font-bold">Gembu B</p>
-                    <p class="text-xs text-[#D4A017]">APC: 1,746 votes</p>
-                </button>
-                <button onclick="selectWard('Mayo Ndaga')" class="bg-[#0A1F44] text-white p-6 rounded-xl text-left hover:bg-slate-900 transition cursor-pointer">
-                    <p class="font-bold">Mayo Ndaga</p>
-                    <p class="text-xs text-[#D4A017]">APC: 1,498 votes</p>
-                </button>
-                <button onclick="selectWard('Titong')" class="bg-[#0A1F44] text-white p-6 rounded-xl text-left border-2 border-[#D4A017] hover:bg-slate-900 transition cursor-pointer">
-                    <p class="font-bold">Titong ⭐ Home Ward</p>
-                    <p class="text-xs text-[#D4A017]">APC: 1,646 votes</p>
-                </button>
-            </div>
-            
-            <p class="text-[11px] text-slate-500 mt-3">■ Navy = APC Leading &nbsp; ■ Gold Border = Home Ward (Titong)</p>
-        </div>
-
-        <!-- Visual Analytics Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Donut Chart & Legend -->
-            <div class="portal-card p-6 rounded-xl flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                    <h2 class="text-sm font-bold text-[#111111] flex items-center gap-2">
-                        <span class="text-[#D4A017]">🍩</span> Vote Share Distribution
-                    </h2>
-                </div>
-                <div class="relative h-48 flex items-center justify-center">
-                    <canvas id="partyShareChart"></canvas>
-                </div>
-                <div id="donutLegendList" class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block bg-[#008751]"></span>APC</span>
-                        <span class="font-semibold text-slate-700">6,838 (56.9%)</span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block bg-red-600"></span>PDP</span>
-                        <span class="font-semibold text-slate-700">2,658 (22.1%)</span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block bg-blue-600"></span>ADC</span>
-                        <span class="font-semibold text-slate-700">895 (7.4%)</span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block bg-[#D4A017]"></span>Others</span>
-                        <span class="font-semibold text-slate-700">1,635 (13.6%)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ward-by-Ward Bar Chart (Labeled Total Votes Cast) -->
-            <div class="portal-card p-6 rounded-xl lg:col-span-2 flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-3">
-                    <h2 class="text-sm font-bold text-[#111111] flex items-center gap-2">
-                        <span class="text-[#D4A017]">📈</span> Ward-by-Ward Total Votes Cast
-                    </h2>
-                </div>
-                <div class="relative h-60">
-                    <canvas id="wardTurnoutChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Polling Unit Feed (Scroll Target ID) -->
-        <div id="resultsAccordionContainerSection" class="portal-card rounded-xl overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-slate-50">
-                <div>
-                    <h2 class="font-bold text-[#111111] text-base">Polling Unit Feed (149 Total Units)</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Tap any unit row to inspect full party breakdown, EC8A photo evidence, and forensic security hashes</p>
-                </div>
-                
-                <!-- Quick Search Input -->
-                <div class="w-full md:w-72">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        onkeyup="filterResults()" 
-                        placeholder="Search PU Code or Ward Name..." 
-                        class="w-full text-xs bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-[#111111] placeholder-slate-400 focus:outline-none focus:border-[#0A1F44] focus:ring-1 focus:ring-[#0A1F44] shadow-sm"
-                    />
-                </div>
-            </div>
-
-            <div class="divide-y divide-slate-100" id="resultsAccordionContainer">
-                <div class="px-6 py-12 text-center text-slate-400 font-medium">
-                    Loading Titong Collation Centre feeds...
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-[#0A1F44] text-white border-t border-[#D4A017]/30 py-6 mt-12 text-center text-xs space-y-1.5 shadow-inner">
-        <p class="font-bold text-[#D4A017]">Titong Collation Centre • Gembu Constituency</p>
-        <p class="text-slate-300">Data from Accredited Party Agents • For Internal Collation Only</p>
-        <p class="text-slate-400 text-[11px]">Not an Official INEC Declaration • © 2026</p>
-    </footer>
-
-    <!-- EC8A Full Preview Modal -->
-    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <div>
-                    <h3 id="modalPuTitle" class="font-bold text-[#111111] text-base">EC8A Sheet Evidence — Titong Center</h3>
-                    <p id="modalHashText" class="text-xs font-mono text-[#0A1F44] font-semibold truncate max-w-md mt-0.5"></p>
-                </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-[#111111] text-xl font-bold p-1 cursor-pointer transition">✕</button>
-            </div>
-            <div class="bg-slate-950 rounded-lg overflow-hidden flex items-center justify-center max-h-[70vh] border border-slate-800 p-2">
-                <img id="modalImage" src="" alt="Full EC8A Result Sheet" class="max-h-[68vh] w-auto object-contain rounded">
-            </div>
-            <div class="flex justify-end">
-                <button onclick="closeModal()" class="bg-[#0A1F44] hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer">
-                    Close Inspector
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        let cachedGlobalData = [];
-        const BACKEND_URL = window.location.origin;
-
-        let partyShareChartInstance = null;
-        let wardTurnoutChartInstance = null;
-
-        async function fetchResults() {
-            try {
-                const response = await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
-                const data = await response.json();
-                
-                cachedGlobalData = data.results || [];
-                renderDashboard(cachedGlobalData);
-            } catch (error) {
-                console.error('Failed to connect to backend, rendering fallback mock simulation:', error);
-                cachedGlobalData = [
-                    { pu_id: "001", ward: "Titong ⭐ Home Ward", bvas_accredited: 310, total_votes: 305, rejected_votes: 5, scores: { "APC": 180, "PDP": 80, "ADC": 30, "LP": 15 }, is_over_voting: false, timestamp: new Date().toISOString() },
-                    { pu_id: "002", ward: "Gembu A", bvas_accredited: 450, total_votes: 440, rejected_votes: 10, scores: { "APC": 260, "PDP": 110, "ADC": 50, "LP": 20 }, is_over_voting: false, timestamp: new Date().toISOString() }
-                ];
-                renderDashboard(cachedGlobalData);
-            }
-        }
-
-        function filterResults() {
-            renderDashboard(cachedGlobalData);
-        }
-
-        function selectWard(wardName) {
-            document.getElementById('wardFilter').value = wardName;
-            filterResults();
-            document.getElementById('resultsAccordionContainerSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function exportCsv() {
-            window.open(`${BACKEND_URL}/export/csv?constituency=Gembu`, '_blank');
-        }
-
-        function openModal(imgUrl, puId, hash) {
-            document.getElementById('modalImage').src = imgUrl;
-            document.getElementById('modalPuTitle').innerText = `EC8A Sheet Evidence — Polling Unit #${puId}`;
-            document.getElementById('modalHashText').innerText = hash ? `Hash: ${hash}` : '';
-            document.getElementById('imageModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('imageModal').classList.add('hidden');
-        }
-
-        function toggleDropdown(id) {
-            const content = document.getElementById(`dropdown_${id}`);
-            const chevron = document.getElementById(`chevron_${id}`);
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                content.classList.add('hidden');
-                chevron.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        function renderDashboard(resultsArray) {
-            const selectedWard = document.getElementById('wardFilter').value;
-            const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
-
-            const filteredResults = resultsArray.filter(res => {
-                const matchesWard = selectedWard === 'ALL' || (res.ward && res.ward.includes(selectedWard));
-                const matchesSearch = !searchKeyword || 
-                    (res.pu_id && res.pu_id.toLowerCase().includes(searchKeyword)) ||
-                    (res.ward && res.ward.toLowerCase().includes(searchKeyword));
-                return matchesWard && matchesSearch;
-            });
-
-            updateDonutChart();
-            updateBarChart();
-
-            const container = document.getElementById('resultsAccordionContainer');
-            container.innerHTML = '';
-
-            if (filteredResults.length === 0) {
-                container.innerHTML = `<div class="px-6 py-10 text-center text-slate-400 font-medium">No polling unit records found for Gembu Constituency.</div>`;
-            } else {
-                filteredResults.forEach((res, index) => {
-                    const sortedPuParties = Object.entries(res.scores || {}).sort((a, b) => b[1] - a[1]);
-                    const leadingPartyName = sortedPuParties.length > 0 ? sortedPuParties[0][0] : 'None';
-                    const leadingPartyVotes = sortedPuParties.length > 0 ? sortedPuParties[0][1] : 0;
-
-                    let partyRows = sortedPuParties
-                        .map(([party, votes]) => `
-                            <div class="flex justify-between items-center bg-white px-3 py-1.5 rounded border border-slate-200 text-xs">
-                                <span class="font-bold text-slate-700">${party}</span>
-                                <span class="font-extrabold text-[#008751]">${votes.toLocaleString()} votes</span>
-                            </div>
-                        `).join('');
-
-                    container.innerHTML += `
-                        <div class="transition hover:bg-slate-50/80">
-                            <div onclick="toggleDropdown(${index})" class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer select-none">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded bg-amber-50 border border-[#D4A017]/40 flex items-center justify-center text-[#0A1F44] font-bold text-xs">
-                                        #${res.pu_id}
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-bold text-[#111111] text-sm">PU #${res.pu_id} - ${res.ward || 'Gembu A'}</span>
-                                            <span class="bg-emerald-50 text-[#008751] text-[10px] px-2 py-0.5 rounded font-bold border border-emerald-200">VERIFIED</span>
-                                        </div>
-                                        <p class="text-xs text-slate-500 mt-0.5">
-                                            BVAS: <strong class="text-slate-800">${res.bvas_accredited}</strong> | Total Votes: <strong class="text-slate-800">${res.total_votes}</strong> (Rej: ${res.rejected_votes})
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
-                                    <div class="text-left sm:text-right">
-                                        <span class="text-[10px] text-slate-400 block uppercase font-semibold">Leading Party</span>
-                                        <span class="text-xs font-bold text-[#008751]">${leadingPartyName} (${leadingPartyVotes}v)</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-xs text-[#0A1F44] font-bold bg-white px-3 py-1.5 rounded border border-slate-200 shadow-sm">
-                                        <span>Tap for breakdown</span>
-                                        <svg id="chevron_${index}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="dropdown_${index}" class="hidden px-6 pb-5 pt-2 bg-slate-50 border-t border-slate-100 space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Complete Party Breakdown</h4>
-                                        <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
-                                            ${partyRows || '<span class="text-xs text-slate-400">No party votes recorded</span>'}
-                                        </div>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <h4 class="text-xs font-bold text-slate-700 uppercase">Collation Evidence & Security</h4>
-                                        <div class="text-[11px] text-slate-500 bg-white p-2.5 rounded border border-slate-200 flex justify-between shadow-sm">
-                                            <span>Logged: <strong>${new Date(res.timestamp).toLocaleTimeString()}</strong></span>
-                                            <span class="text-[#0A1F44] font-semibold">Titong Secure Relay</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function updateDonutChart() {
-            const ctx = document.getElementById('partyShareChart').getContext('2d');
-            if (partyShareChartInstance) {
-                partyShareChartInstance.destroy();
-            }
-            partyShareChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['APC', 'PDP', 'ADC', 'Others'],
-                    datasets: [{
-                        data: [6838, 2658, 895, 1635],
-                        backgroundColor: ['#008751', '#dc2626', '#2563eb', '#D4A017'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function updateBarChart() {
-            const ctx = document.getElementById('wardTurnoutChart').getContext('2d');
-            if (wardTurnoutChartInstance) {
-                wardTurnoutChartInstance.destroy();
-            }
-            wardTurnoutChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Gembu A', 'Gembu B', 'Mayo Ndaga', 'Titong ⭐'],
-                    datasets: [{
-                        label: 'Total Votes Cast',
-                        data: [3412, 3117, 2583, 2914],
-                        backgroundColor: '#0A1F44',
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#475569', font: { size: 11 } } },
-                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#475569', font: { size: 11 } } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        fetchResults();
-        setInterval(fetchResults, 60000);
-    </script>
+async function fetchResults(){
+  try{
+    const r=await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
+    const d=await r.json();
+    cachedGlobalData=d.results||[];
+    renderDashboard(cachedGlobalData);
+  }catch(e){
+    cachedGlobalData=[
+      {pu_id:"001",ward:"Titong",bvas_accredited:310,total_votes:305,rejected_votes:5,scores:{APC:180,PDP:80,ADC:30,LP:15},timestamp:new Date().toISOString()},
+      {pu_id:"002",ward:"Gembu A",bvas_accredited:450,total_votes:440,rejected_votes:10,scores:{APC:260,PDP:110,ADC:50,LP:20},timestamp:new Date().toISOString()}
+    ];
+    renderDashboard(cachedGlobalData);
+  }
+}
+function filterResults(){ renderDashboard(cachedGlobalData); }
+function selectWard(w){ document.getElementById('wardFilter').value=w; filterResults(); document.getElementById('resultsAccordionContainer').scrollIntoView({behavior:'smooth'}); }
+function exportCsv(){ window.open(`${BACKEND_URL}/export/csv?constituency=Gembu`,'_blank'); }
+function openModal(url,pu,hash){
+  document.getElementById('modalImage').src=url;
+  document.getElementById('modalPuTitle').innerText='EC8A Sheet — PU #'+pu;
+  document.getElementById('modalHashText').innerText=hash||'';
+  document.getElementById('imageModal').style.display='flex';
+}
+function closeModal(){ document.getElementById('imageModal').style.display='none'; }
+function toggleDropdown(i){
+  const el=document.getElementById('dropdown_'+i);
+  el.style.display = el.style.display==='block' ? 'none' : 'block';
+}
+function renderDashboard(resultsArray){
+  const ward=document.getElementById('wardFilter').value;
+  const kw=document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered=resultsArray.filter(r=>{
+    const mw = ward==='ALL' || (r.ward && r.ward.includes(ward));
+    const ms = !kw || (r.pu_id && r.pu_id.toLowerCase().includes(kw)) || (r.ward && r.ward.toLowerCase().includes(kw));
+    return mw && ms;
+  });
+  // Totals
+  let totals={}, totalVotes=0;
+  resultsArray.forEach(x=>{ Object.entries(x.scores||{}).forEach(([p,v])=>{ totals[p]=(totals[p]||0)+v; totalVotes+=v; }); });
+  // If no live data, show your known totals so page is not empty
+  if(resultsArray.length===0){ totals={APC:6838,PDP:2658,ADC:895,Others:1635}; totalVotes=12026; }
+  if(resultsArray.length>0){
+    document.getElementById('heroPUs').textContent=resultsArray.length;
+    document.getElementById('heroTotalVotes').textContent=totalVotes.toLocaleString();
+    let pct=(resultsArray.length/149*100).toFixed(1);
+    document.getElementById('heroProgressBar').style.width=pct+'%';
+    document.getElementById('heroProgressText').textContent=resultsArray.length+' / 149 PUs - '+pct+'% Reported';
+  }
+  let parties=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  let max=parties[0][1];
+  document.getElementById('leadingBadge').textContent='● '+parties[0][0]+' leading';
+  document.getElementById('heroLeaderText').textContent=parties[0][0]+' is Leading';
+  document.getElementById('leadText2').textContent=parties[0][0]+' is Leading';
+  document.getElementById('topPartiesGrid').innerHTML=parties.map(([p,v])=>{
+    let pct=totalVotes? (v/totalVotes*100).toFixed(1):0;
+    return `<div class="party"><div class="party-info"><b>${p}</b><div class="bar"><div style="width:${pct}%"></div></div></div><div style="text-align:right;"><b>${v.toLocaleString()}</b><br><span style="font-size:12px;color:#777;">${pct}%</span></div></div>`;
+  }).join('');
+  // Wards - use real data if available, else your known numbers
+  let wardAPC={};
+  resultsArray.forEach(x=>{ wardAPC[x.ward]=(wardAPC[x.ward]||0)+(x.scores?.APC||0); });
+  let wards=[['Gembu A',1948],['Gembu B',1746],['Mayo Ndaga',1498],['Titong ⭐ Home Ward',1646]];
+  document.getElementById('wardSummaryGrid').innerHTML=wards.map(([name,def])=>{
+    let val = wardAPC[name.replace(' ⭐ Home Ward','')] || def;
+    let isTitong = name.includes('Titong');
+    return `<button onclick="selectWard('${name.replace(' ⭐ Home Ward','')}')" style="${isTitong?'border:2px solid #D4A017;':''}"><b>${name}</b><span>APC: ${val.toLocaleString()} votes</span></button>`;
+  }).join('');
+  updateDonutChart(parties);
+  updateBarChart();
+  // PU Feed
+  const c=document.getElementById('resultsAccordionContainer');
+  if(filtered.length===0){ c.innerHTML=`<div style="padding:20px;text-align:center;color:#999;">No polling unit records found.</div>`; }
+  else{
+    c.innerHTML=filtered.map((res,i)=>{
+      let sorted=Object.entries(res.scores||{}).sort((a,b)=>b[1]-a[1]);
+      let lead=sorted.length? sorted[0][0]+' ('+sorted[0][1]+'v)' : 'None';
+      let rows=sorted.map(([p,v])=>`<div style="display:flex;justify-content:space-between;background:#fff;padding:6px 8px;border:1px solid #eee;border-radius:6px;"><span><b>${p}</b></span><b style="color:#008751;">${v.toLocaleString()} votes</b></div>`).join('');
+      let photoBtn = res.photo_url ? `<button onclick="openModal('${res.photo_url}','${res.pu_id}','')" style="background:#0a1f44;color:#fff;padding:8px 12px;border-radius:8px;border:none;margin-top:8px;">View EC8A Photo</button>` : `<span style="font-size:12px;color:#999;">No EC8A photo</span>`;
+      return `<div class="pu" onclick="toggleDropdown(${i})"><b>PU #${res.pu_id} - ${res.ward||''}</b><p>BVAS: ${res.bvas_accredited} | Total: ${res.total_votes} (Rej: ${res.rejected_votes}) • Leading: ${lead}</p><div id="dropdown_${i}" class="pu-detail"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${rows}</div><div style="margin-top:8px;">${photoBtn}</div><div style="font-size:11px;color:#888;margin-top:6px;">Logged: ${new Date(res.timestamp).toLocaleTimeString()}</div></div></div>`;
+    }).join('');
+  }
+  document.getElementById('updated').textContent=new Date().toLocaleTimeString();
+}
+function updateDonutChart(parties){
+  const ctx=document.getElementById('partyShareChart').getContext('2d');
+  if(partyShareChartInstance) partyShareChartInstance.destroy();
+  partyShareChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:parties.map(p=>p[0]),datasets:[{data:parties.map(p=>p[1]),backgroundColor:['#008751','#dc2626','#2563eb','#D4A017','#888'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+function updateBarChart(){
+  const ctx=document.getElementById('wardTurnoutChart').getContext('2d');
+  if(wardTurnoutChartInstance) wardTurnoutChartInstance.destroy();
+  wardTurnoutChartInstance=new Chart(ctx,{type:'bar',data:{labels:['Gembu A','Gembu B','Mayo Ndaga','Titong'],datasets:[{label:'Total Votes Cast',data:[3412,3117,2583,2914],backgroundColor:'#0A1F44',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+}
+fetchResults();
+setInterval(fetchResults,60000);
+</script>
 </body>
 </html>
