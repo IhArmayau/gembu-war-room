@@ -3,9 +3,24 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 5000;
+const DATA_FILE = path.join(__dirname, 'data.json');
 
-// In-memory storage for polling unit results
-const submittedResults = [];
+// Load saved results from file - so data survives restart
+let submittedResults = [];
+try {
+  if (fs.existsSync(DATA_FILE)) {
+    submittedResults = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    console.log(`[LOAD] Restored ${submittedResults.length} results from data.json`);
+  }
+} catch (e) {
+  submittedResults = [];
+}
+
+function saveResults() {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(submittedResults, null, 2));
+  } catch (e) { console.error('Save failed:', e.message); }
+}
 
 const parseUrl = (reqUrl) => {
     const parsed = new URL(reqUrl, `http://localhost:${PORT}`);
@@ -62,6 +77,26 @@ const server = http.createServer((req, res) => {
         } else {
             res.writeHead(404, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ status: 'error', message: 'dashboard.html not found' }));
+            return;
+        }
+    }
+
+    // FIX 1: Serve ANY image in main folder - titong.jpg, etc.
+    if (req.method === 'GET' && (pathname.endsWith('.jpg') || pathname.endsWith('.jpeg') || pathname.endsWith('.png') || pathname.endsWith('.webp'))) {
+        const filePath = path.join(__dirname, pathname);
+        // Prevent path traversal
+        if (!filePath.startsWith(__dirname)) {
+            res.writeHead(403); res.end('Forbidden'); return;
+        }
+        if (fs.existsSync(filePath)) {
+            const ext = path.extname(filePath).toLowerCase();
+            const contentType = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+            res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600' });
+            fs.createReadStream(filePath).pipe(res);
+            return;
+        } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'error', message: 'Image not found: ' + pathname }));
             return;
         }
     }
@@ -161,11 +196,9 @@ const server = http.createServer((req, res) => {
                     photo_url = data.photo_url || null;
                 }
 
-                // Calculate total votes across all registered parties
                 const totalPartyVotes = Object.values(scores || {}).reduce((a, b) => a + b, 0);
                 const absoluteTotalVotes = totalPartyVotes + (parseInt(rejected_votes) || 0);
 
-                // Forensic Analytics
                 if (absoluteTotalVotes > (bvas_accredited || 0)) {
                     isOverVoting = true;
                     forensicFlags.push("OVER_VOTING_DETECTED");
@@ -191,6 +224,7 @@ const server = http.createServer((req, res) => {
                 };
 
                 submittedResults.push(resultRecord);
+                saveResults(); // FIX 2: Save to data.json immediately
                 console.log(`[SUCCESS] Result logged for PU ID: ${pu_id} [Ward: ${ward}] | Total Votes: ${absoluteTotalVotes}`);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -206,7 +240,6 @@ const server = http.createServer((req, res) => {
             }
         });
     } 
-    // API Endpoint to view results
     else if (req.method === 'GET' && pathname === '/results') {
         let results = submittedResults;
         const constituencyQuery = searchParams.get('constituency');
@@ -224,7 +257,6 @@ const server = http.createServer((req, res) => {
             results: results
         }));
     } 
-    // API Endpoint to export official Collation CSV Report
     else if (req.method === 'GET' && pathname === '/export/csv') {
         let csvHeader = "ID,PU_ID,Constituency,Ward,BVAS_Accredited,Total_Votes,Rejected,Over_Voting,Photo_URL,Forensic_Flags,Timestamp\n";
         let csvRows = submittedResults.map(r => 
@@ -243,5 +275,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Gembu War Room Zero-Dependency Backend running on port ${PORT}`);
+    console.log(`Gembu War Room Zero-Dependency Backend running on port ${PORT} | Loaded ${submittedResults.length} results`);
 });
