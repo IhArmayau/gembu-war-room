@@ -1,301 +1,201 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gembu Constituency Situation Room | GSSS Gembu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 500: '#10b981', 600: '#059669', 950: '#022c22' }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .glass-card {
-            background: rgba(15, 23, 42, 0.90);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(51, 65, 85, 0.6);
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gembu Constituency Situation Room | GSSS Gembu</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:#f6f7f5;color:#111}
+.top{background:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:20}
+.logo-row{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:50%;background:#0a5c36;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logo-row b{font-size:15px;line-height:1.1;display:block}
+.logo-row span{font-size:12px;color:#666}
+.wrap{max-width:900px;margin:0 auto;padding:14px 12px 30px}
+.hero{background:#0a5c36;color:#fff;padding:20px 16px;border-radius:16px}
+.hero h1{font-size:24px;line-height:1.1}
+.hero p{color:#d6e8dd;font-size:13px;margin-top:6px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+label{font-size:11px;font-weight:700;text-transform:uppercase;color:#333;display:block;margin-bottom:5px}
+input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;font-size:14px;background:#fff}
+input:focus,select:focus{outline:none;border-color:#0a5c36}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.party-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(min-width:600px){ .party-grid{grid-template-columns:repeat(6,1fr);} .grid2{grid-template-columns:1fr 1fr} }
+.party-grid div{background:#f9faf9;padding:8px;border-radius:10px;border:1px solid #eee}
+.party-grid span{font-size:11px;font-weight:700;color:#666;display:block;margin-bottom:4px}
+.party-grid input{padding:8px}
+.btn-green{background:#0a5c36;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+.btn-dark{background:#fff;color:#111;border:1px solid #ddd;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;font-size:12px}
+.btn-red{background:#fff;color:#c00;border:1px solid #f5c6c6;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;font-size:12px}
+#statusMessage{margin-top:12px;padding:12px;border-radius:12px;font-size:13px;font-weight:700;text-align:center;display:none}
+#authModal{position:fixed;inset:0;background:#0a5c36;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.auth-box{background:#fff;border-radius:16px;max-width:380px;width:100%;padding:22px;text-align:center}
+.auth-box h2{font-size:18px;margin:10px 0 4px}
+.auth-box p{font-size:12px;color:#666}
+</style>
 </head>
-<body class="bg-slate-950 min-h-screen text-slate-100 antialiased font-sans p-4 overflow-y-auto flex flex-col justify-between custom-scrollbar">
+<body>
 
-    <!-- Strict Authentication Overlay (Starts Visible) -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-card p-8 rounded-2xl max-w-md w-full shadow-2xl border border-slate-700 space-y-5 text-center">
-            <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-2xl">
-                🔒
-            </div>
-            <div>
-                <h2 class="text-lg font-black text-white uppercase tracking-wider">Situation Room Restricted Access</h2>
-                <p class="text-xs text-slate-400 mt-1">GSSS Gembu Collation Center — Authorized Clerks Only</p>
-            </div>
-            <div class="space-y-3">
-                <input type="password" id="pinInput" placeholder="Enter Operator PIN (e.g. 2027)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-center text-white tracking-widest focus:outline-none focus:border-emerald-500">
-                <button onclick="verifyPin()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-950/50 cursor-pointer uppercase tracking-wider">
-                    Authenticate Console
-                </button>
-            </div>
-            <p id="authError" class="text-xs text-rose-500 font-bold hidden">Invalid PIN! Access Denied.</p>
-        </div>
+<!-- PIN -->
+<div id="authModal">
+  <div class="auth-box">
+    <div style="width:56px;height:56px;background:#e6f4ee;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto;">🔒</div>
+    <h2>SITUATION ROOM</h2>
+    <p>GSSS Gembu Collation Center — Authorized Clerks Only</p>
+    <div style="margin-top:16px;">
+      <input type="password" id="pinInput" placeholder="Enter Operator PIN (2027)" style="text-align:center;letter-spacing:4px;">
+      <button onclick="verifyPin()" class="btn-green" style="width:100%;margin-top:10px;">Authenticate Console</button>
+    </div>
+    <p id="authError" style="color:#c00;font-weight:700;font-size:12px;margin-top:8px;display:none;">Invalid PIN! Access Denied.</p>
+    <p style="margin-top:12px;font-size:11px;color:#999;">Gembu Constituency • 2027 Election</p>
+  </div>
+</div>
+
+<!-- TOP -->
+<div class="top">
+  <div class="logo-row"><div class="logo">TS</div><div><b>Gembu Constituency</b><span>Situation Room • GSSS Gembu</span></div></div>
+  <div style="background:#e6f4ee;color:#0a5c36;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700;">● LIVE</div>
+</div>
+
+<div class="wrap" id="mainContent" style="display:none;">
+  <div class="hero">
+    <h1>Gembu Constituency<br>Situation Room</h1>
+    <p>GSSS Gembu Collation Center — Voice Report Logging (18 INEC Parties)</p>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <a href="/" target="_blank" class="btn-dark" style="background:#fff;">Open Live Dashboard ➔</a>
+      <button onclick="logoutSituationRoom()" class="btn-red">🔒 Logout</button>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:#cfe6d8;">Submitted: <b id="submittedCount">—</b> PUs &nbsp;•&nbsp; Last update: <span id="lastUpdate">—</span></p>
+  </div>
+
+  <form id="relayForm" onsubmit="submitRelayData(event)" class="card">
+    <input type="hidden" id="constituency" value="Gembu">
+    <div class="grid2">
+      <div><label>Polling Unit ID *</label><input type="text" id="pu_id" required placeholder="e.g. 001, 014"></div>
+      <div><label>Ward (Gembu Constituency) *</label>
+        <select id="ward" required>
+          <option value="Gembu A">Gembu A Ward</option>
+          <option value="Gembu B">Gembu B Ward</option>
+          <option value="Mayo Ndaga">Mayo Ndaga Ward</option>
+          <option value="Titong">Titong Ward</option>
+        </select>
+      </div>
     </div>
 
-    <!-- Main Container (Hidden until unlocked) -->
-    <div id="mainContent" class="max-w-6xl mx-auto w-full space-y-3.5 my-auto hidden">
-        <!-- Top Banner -->
-        <div class="glass-card px-5 py-3 rounded-xl shadow-lg flex justify-between items-center border border-slate-800">
-            <div>
-                <h1 class="text-base font-black text-white uppercase tracking-wide">📞 Gembu Constituency Situation Room</h1>
-                <p class="text-[11px] text-emerald-400">GSSS Gembu Collation Center — Voice Report Logging (18 INEC Parties)</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="dashboard.html" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-1.5 rounded-lg transition border border-slate-700">
-                    Open Live Dashboard ➔
-                </a>
-                <button onclick="logoutSituationRoom()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-bold px-3 py-1.5 rounded-lg transition border border-rose-800/80 cursor-pointer" title="Lock Console & Logout">
-                    🔒 Logout
-                </button>
-            </div>
-        </div>
-
-        <!-- Entry Form -->
-        <form id="relayForm" onsubmit="submitRelayData(event)" class="glass-card p-5 rounded-xl shadow-xl space-y-3.5 border border-slate-800">
-            
-            <input type="hidden" id="constituency" value="Gembu">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Polling Unit ID -->
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Polling Unit ID *</label>
-                    <input type="text" id="pu_id" required placeholder="e.g. 001, 014" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                </div>
-
-                <!-- Ward Selection -->
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Ward (Gembu Constituency) *</label>
-                    <select id="ward" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer">
-                        <option value="Gembu A">Gembu A Ward</option>
-                        <option value="Gembu B">Gembu B Ward</option>
-                        <option value="Mayo Ndaga">Mayo Ndaga Ward</option>
-                        <option value="Titong">Titong Ward</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Metrics -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 border-t border-slate-800/80 pt-3">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">BVAS Accredited *</label>
-                    <input type="number" id="bvas_accredited" required min="0" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Total Votes Cast *</label>
-                    <input type="number" id="total_votes" required min="0" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Rejected Votes</label>
-                    <input type="number" id="rejected_votes" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                </div>
-            </div>
-
-            <!-- All 18 INEC Registered Political Parties (Compact Grid) -->
-            <div class="border-t border-slate-800/80 pt-3">
-                <label class="block text-[11px] font-bold text-emerald-400 uppercase mb-2">Official INEC Registered Parties (Phone Dictation)</label>
-                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">A</span>
-                        <input type="number" id="score_A" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">AA</span>
-                        <input type="number" id="score_AA" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">AAC</span>
-                        <input type="number" id="score_AAC" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">ADC</span>
-                        <input type="number" id="score_ADC" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">ADP</span>
-                        <input type="number" id="score_ADP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">APC</span>
-                        <input type="number" id="score_APC" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">APGA</span>
-                        <input type="number" id="score_APGA" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">APM</span>
-                        <input type="number" id="score_APM" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">APP</span>
-                        <input type="number" id="score_APP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">BP</span>
-                        <input type="number" id="score_BP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">LP</span>
-                        <input type="number" id="score_LP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">NNPP</span>
-                        <input type="number" id="score_NNPP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">NRM</span>
-                        <input type="number" id="score_NRM" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">PDP</span>
-                        <input type="number" id="score_PDP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">PRP</span>
-                        <input type="number" id="score_PRP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">SDP</span>
-                        <input type="number" id="score_SDP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">YPP</span>
-                        <input type="number" id="score_YPP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block mb-0.5 font-semibold">ZLP</span>
-                        <input type="number" id="score_ZLP" min="0" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Physical Sheet Upload & Submit -->
-            <div class="border-t border-slate-800/80 pt-3 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div class="w-full sm:w-auto flex-1">
-                    <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">EC8A Sheet Photo (Optional)</label>
-                    <input type="file" id="ec8a_photo" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
-                </div>
-                <div class="w-full sm:w-auto flex justify-end items-end pt-2 sm:pt-0">
-                    <button type="submit" id="submitBtn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-950/50 transition cursor-pointer flex items-center justify-center gap-2">
-                        <span>💾</span> Log & Broadcast Result
-                    </button>
-                </div>
-            </div>
-        </form>
-
-        <div id="statusMessage" class="hidden p-3 rounded-xl text-xs font-bold text-center"></div>
+    <div class="grid3" style="margin-top:14px;">
+      <div><label>BVAS Accredited *</label><input type="number" id="bvas_accredited" required min="0" placeholder="0"></div>
+      <div><label>Total Votes Cast *</label><input type="number" id="total_votes" required min="0" placeholder="0"></div>
+      <div><label>Rejected Votes</label><input type="number" id="rejected_votes" min="0" value="0"></div>
     </div>
 
-    <script>
-        const BACKEND_URL = window.location.origin;
-        const AUTHORIZED_PIN = "2027";
-        const partiesList = ['A', 'AA', 'AAC', 'ADC', 'ADP', 'APC', 'APGA', 'APM', 'APP', 'BP', 'LP', 'NNPP', 'NRM', 'PDP', 'PRP', 'SDP', 'YPP', 'ZLP'];
+    <div style="margin-top:16px;">
+      <label style="color:#0a5c36;">Official INEC Registered Parties (Phone Dictation)</label>
+      <div class="party-grid">
+        <div><span>A</span><input type="number" id="score_A" min="0" value="0"></div>
+        <div><span>AA</span><input type="number" id="score_AA" min="0" value="0"></div>
+        <div><span>AAC</span><input type="number" id="score_AAC" min="0" value="0"></div>
+        <div><span>ADC</span><input type="number" id="score_ADC" min="0" value="0"></div>
+        <div><span>ADP</span><input type="number" id="score_ADP" min="0" value="0"></div>
+        <div><span>APC</span><input type="number" id="score_APC" min="0" value="0" style="border-color:#0a5c36;background:#e6f4ee;font-weight:700;"></div>
+        <div><span>APGA</span><input type="number" id="score_APGA" min="0" value="0"></div>
+        <div><span>APM</span><input type="number" id="score_APM" min="0" value="0"></div>
+        <div><span>APP</span><input type="number" id="score_APP" min="0" value="0"></div>
+        <div><span>BP</span><input type="number" id="score_BP" min="0" value="0"></div>
+        <div><span>LP</span><input type="number" id="score_LP" min="0" value="0"></div>
+        <div><span>NNPP</span><input type="number" id="score_NNPP" min="0" value="0"></div>
+        <div><span>NRM</span><input type="number" id="score_NRM" min="0" value="0"></div>
+        <div><span>PDP</span><input type="number" id="score_PDP" min="0" value="0"></div>
+        <div><span>PRP</span><input type="number" id="score_PRP" min="0" value="0"></div>
+        <div><span>SDP</span><input type="number" id="score_SDP" min="0" value="0"></div>
+        <div><span>YPP</span><input type="number" id="score_YPP" min="0" value="0"></div>
+        <div><span>ZLP</span><input type="number" id="score_ZLP" min="0" value="0"></div>
+      </div>
+      <p style="font-size:12px;color:#777;margin-top:8px;">Check: Party votes + Rejected should = Total Votes Cast. Server will flag over-voting if it exceeds BVAS.</p>
+    </div>
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('gembu_situation_room_auth') === 'true') {
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-            }
-        });
+    <div style="margin-top:16px;border-top:1px solid #eee;padding-top:14px;">
+      <label>EC8A Sheet Photo (Optional)</label>
+      <input type="file" id="ec8a_photo" accept="image/*">
+      <button type="submit" id="submitBtn" class="btn-green" style="width:100%;margin-top:14px;">💾 Log & Broadcast Result</button>
+    </div>
+  </form>
 
-        function verifyPin() {
-            const inputVal = document.getElementById('pinInput').value;
-            const errorBox = document.getElementById('authError');
+  <div id="statusMessage"></div>
+  <p style="text-align:center;font-size:11px;color:#999;margin-top:12px;">Gembu Collation Centre • Data from Accredited Party Agents • Not an Official INEC Declaration • © 2026</p>
+</div>
 
-            if (inputVal === AUTHORIZED_PIN) {
-                localStorage.setItem('gembu_situation_room_auth', 'true');
-                document.getElementById('authModal').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-            } else {
-                errorBox.classList.remove('hidden');
-                document.getElementById('pinInput').value = '';
-            }
-        }
-
-        function logoutSituationRoom() {
-            localStorage.removeItem('gembu_situation_room_auth');
-            document.getElementById('mainContent').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('hidden');
-            document.getElementById('pinInput').value = '';
-            document.getElementById('authError').classList.add('hidden');
-        }
-
-        document.getElementById('pinInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                verifyPin();
-            }
-        });
-
-        async function submitRelayData(event) {
-            event.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('statusMessage');
-            
-            btn.disabled = true;
-            btn.innerText = 'Logging...';
-
-            try {
-                const formData = new FormData();
-                formData.append('pu_id', document.getElementById('pu_id').value);
-                formData.append('constituency', document.getElementById('constituency').value);
-                formData.append('ward', document.getElementById('ward').value);
-                formData.append('bvas_accredited', document.getElementById('bvas_accredited').value);
-                formData.append('total_votes', document.getElementById('total_votes').value);
-                formData.append('rejected_votes', document.getElementById('rejected_votes').value);
-
-                const scores = {};
-                partiesList.forEach(party => {
-                    const val = parseInt(document.getElementById(`score_${party}`).value) || 0;
-                    if (val > 0) scores[party] = val;
-                });
-                formData.append('scores', JSON.stringify(scores));
-
-                const photoFile = document.getElementById('ec8a_photo').files[0];
-                if (photoFile) formData.append('photo', photoFile);
-
-                const response = await fetch(`${BACKEND_URL}/submit`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alertBox.className = "p-3 rounded-xl text-xs font-bold text-center bg-emerald-950 text-emerald-300 border border-emerald-800";
-                    alertBox.innerText = `Success! PU #${document.getElementById('pu_id').value} logged successfully.`;
-                    alertBox.classList.remove('hidden');
-                    document.getElementById('relayForm').reset();
-                } else {
-                    throw new Error(result.error || 'Submission failed');
-                }
-            } catch (error) {
-                console.error(error);
-                alertBox.className = "p-3 rounded-xl text-xs font-bold text-center bg-rose-950 text-rose-300 border border-rose-800";
-                alertBox.innerText = `Error: ${error.message}`;
-                alertBox.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = '💾 Log & Broadcast Result';
-            }
-        }
-    </script>
+<script>
+const BACKEND_URL=window.location.origin;
+const AUTHORIZED_PIN="2027";
+const partiesList=['A','AA','AAC','ADC','ADP','APC','APGA','APM','APP','BP','LP','NNPP','NRM','PDP','PRP','SDP','YPP','ZLP'];
+window.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('gembu_situation_room_auth')==='true'){
+    document.getElementById('authModal').style.display='none';
+    document.getElementById('mainContent').style.display='block';
+    loadCount();
+  }
+});
+function verifyPin(){
+  const v=document.getElementById('pinInput').value;
+  if(v===AUTHORIZED_PIN){
+    localStorage.setItem('gembu_situation_room_auth','true');
+    document.getElementById('authModal').style.display='none';
+    document.getElementById('mainContent').style.display='block';
+    loadCount();
+  } else {
+    document.getElementById('authError').style.display='block';
+    document.getElementById('pinInput').value='';
+  }
+}
+function logoutSituationRoom(){
+  localStorage.removeItem('gembu_situation_room_auth');
+  document.getElementById('mainContent').style.display='none';
+  document.getElementById('authModal').style.display='flex';
+  document.getElementById('pinInput').value='';
+}
+document.getElementById('pinInput').addEventListener('keypress',e=>{ if(e.key==='Enter') verifyPin(); });
+async function loadCount(){
+  try{
+    const r=await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
+    const d=await r.json();
+    document.getElementById('submittedCount').textContent=(d.results||[]).length+' / 149';
+    document.getElementById('lastUpdate').textContent=new Date().toLocaleTimeString();
+  }catch(e){}
+}
+async function submitRelayData(event){
+  event.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  const alertBox=document.getElementById('statusMessage');
+  btn.disabled=true; btn.innerText='Logging...';
+  try{
+    const formData=new FormData();
+    formData.append('pu_id',document.getElementById('pu_id').value);
+    formData.append('constituency',document.getElementById('constituency').value);
+    formData.append('ward',document.getElementById('ward').value);
+    formData.append('bvas_accredited',document.getElementById('bvas_accredited').value);
+    formData.append('total_votes',document.getElementById('total_votes').value);
+    formData.append('rejected_votes',document.getElementById('rejected_votes').value);
+    const scores={};
+    partiesList.forEach(p=>{ const val=parseInt(document.getElementById(`score_${p}`).value)||0; if(val>0) scores[p]=val; });
+    formData.append('scores',JSON.stringify(scores));
+    const photo=document.getElementById('ec8a_photo').files[0];
+    if(photo) formData.append('photo',photo);
+    const res=await fetch(`${BACKEND_URL}/submit`,{method:'POST',body:formData});
+    const result=await res.json();
+    if(res.ok){
+      alertBox.style.display='block'; alertBox.style.background='#e6f4ee'; alertBox.style.color='#0a5c36';
+      alertBox.innerText=`Success! PU #${document.getElementById('pu_id').value} logged successfully.`;
+      document.getElementById('relayForm').reset();
+      loadCount();
+    } else throw new Error(result.error||'Submission failed');
+  }catch(e){
+    alertBox.style.display='block'; alertBox.style.background='#fde8e8'; alertBox.style.color='#c00';
+    alertBox.innerText='Error: '+e.message;
+  }finally{ btn.disabled=false; btn.innerText='💾 Log & Broadcast Result'; }
+}
+</script>
 </body>
 </html>
