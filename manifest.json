@@ -1,6 +1,6 @@
 {
   "name": "Gembu Constituency Results",
-  "short_name": "Gembu Results",
+  "short_name": "Gembu Constituency",
   "description": "Live State Assembly election results for Gembu Constituency",
   "start_url": "/",
   "display": "standalone",
