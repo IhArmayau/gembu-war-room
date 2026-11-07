@@ -103,6 +103,20 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  // Serve PWA manifest.json
+  if (req.method === 'GET' && pathname === '/manifest.json') {
+    const filePath = path.join(__dirname, 'manifest.json');
+    if (fs.existsSync(filePath)) {
+      res.writeHead(200, { 'Content-Type': 'application/manifest+json', 'Cache-Control': 'public, max-age=3600' });
+      fs.createReadStream(filePath).pipe(res);
+      return;
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'error', message: 'manifest.json not found' }));
+      return;
+    }
+  }
+
   // Serve ANY image in main folder - titong.jpg, etc.
   if (req.method === 'GET' && (pathname.endsWith('.jpg') || pathname.endsWith('.jpeg') || pathname.endsWith('.png') || pathname.endsWith('.webp'))) {
     const filePath = path.join(__dirname, pathname);
