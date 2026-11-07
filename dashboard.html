@@ -23,7 +23,7 @@ body{background:#f6f7f5;color:#111}
 .card b{font-size:26px;display:block}
 .card span{font-size:13px;color:#cfe6d8;display:block;margin-top:6px}
 .progress{height:8px;background:#0a4a2d;border-radius:20px;margin-top:16px;overflow:hidden}
-.progress div{height:100%;background:#2ea8ff;width:28.2%}
+.progress div{height:100%;background:#2ea8ff;width:0%}
 .progress-text{font-size:13px;color:#cfe6d8;margin-top:8px}
 .controls{display:flex;gap:10px;padding:12px 12px 0}
 .controls select,.controls button{flex:1;padding:11px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:600}
@@ -56,7 +56,7 @@ body{background:#f6f7f5;color:#111}
 
 <div class="top">
   <div class="logo-row"><div class="logo">TS</div><div><b>Gembu Constituency</b><span>State Assembly election results</span></div></div>
-  <div>☰</div>
+  <div style="background:#e6f4ee;color:#0a5c36;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700;">● LIVE</div>
 </div>
 
 <div class="hero">
@@ -66,11 +66,11 @@ body{background:#f6f7f5;color:#111}
   <div class="grid">
     <div class="card"><b>4</b><span>Wards</span></div>
     <div class="card"><b>149</b><span>Polling Units</span></div>
-    <div class="card"><b><span id="heroPUs">42</span> / 149</b><span>Polling units reported</span></div>
-    <div class="card"><b id="heroTotalVotes">12,026</b><span>Total votes counted</span></div>
+    <div class="card"><b><span id="heroPUs">0</span> / 149</b><span>Polling units reported</span></div>
+    <div class="card"><b id="heroTotalVotes">0</b><span>Total votes counted</span></div>
   </div>
   <div class="progress"><div id="heroProgressBar"></div></div>
-  <div class="progress-text"><span id="heroProgressText">42 / 149 PUs - 28.2% Reported</span> • <span id="heroLeaderText">APC is Leading + 4,180 votes ahead (56.9%)</span></div>
+  <div class="progress-text"><span id="heroProgressText">0 / 149 PUs - 0% Reported</span> • <span id="heroLeaderText">Waiting for first result...</span></div>
 </div>
 
 <div class="controls">
@@ -88,12 +88,12 @@ body{background:#f6f7f5;color:#111}
 <div class="section">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;">
     <div><small>Constituency total</small><h2>Votes by party</h2></div>
-    <div class="badge" id="leadingBadge">● APC leading</div>
+    <div class="badge" id="leadingBadge">● No results yet</div>
   </div>
   <div id="topPartiesGrid" style="margin-top:12px;"></div>
   <div class="candidate">
     <img src="/titong.jpg" onerror="this.style.display='none'" alt="Hon. Titong">
-    <div><b>Hon. Abdul-Azeez Sulieman Titong</b><span>APC • Candidate for Member, Gembu Constituency</span><span style="color:#0a5c36;font-weight:700;margin-top:2px;" id="leadText2">APC is Leading</span></div>
+    <div><b>Hon. Abdul-Azeez Sulieman Titong</b><span>APC • Candidate for Member, Gembu Constituency</span><span style="color:#0a5c36;font-weight:700;margin-top:2px;" id="leadText2">Waiting for results...</span></div>
   </div>
 </div>
 
@@ -101,7 +101,7 @@ body{background:#f6f7f5;color:#111}
   <small>Ward Breakdown</small>
   <h2 style="font-size:18px;margin-top:4px;">Tap a ward to filter results</h2>
   <div class="ward-grid" id="wardSummaryGrid"></div>
-  <p style="font-size:11px;color:#888;margin-top:8px;">■ Navy = APC Leading &nbsp; ■ Gold Border = Home Ward (Titong)</p>
+  <p style="font-size:11px;color:#888;margin-top:8px;">■ Navy = Leading Party &nbsp; ■ Gold Border = Home Ward (Titong)</p>
 </div>
 
 <div class="section">
@@ -109,6 +109,7 @@ body{background:#f6f7f5;color:#111}
   <h2 style="font-size:18px;">Vote Share & Ward Turnout</h2>
   <div style="height:200px;margin-top:12px;"><canvas id="partyShareChart"></canvas></div>
   <div style="height:200px;margin-top:16px;"><canvas id="wardTurnoutChart"></canvas></div>
+  <p id="chartEmpty" style="text-align:center;color:#999;font-size:13px;margin-top:10px;">Charts will appear after first PU is submitted.</p>
 </div>
 
 <div class="section">
@@ -121,7 +122,6 @@ body{background:#f6f7f5;color:#111}
 
 <div class="footer">Gembu Collation Centre • Data from Accredited Party Agents • Not an Official INEC Declaration • © 2026 • Updated <span id="updated">Just now</span></div>
 
-<!-- Modal -->
 <div id="imageModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#fff;border-radius:14px;max-width:600px;width:100%;padding:16px;">
     <div style="display:flex;justify-content:space-between;"><b id="modalPuTitle">EC8A Sheet</b><button onclick="closeModal()">✕</button></div>
@@ -141,14 +141,8 @@ async function fetchResults(){
     const r=await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
     const d=await r.json();
     cachedGlobalData=d.results||[];
-    renderDashboard(cachedGlobalData);
-  }catch(e){
-    cachedGlobalData=[
-      {pu_id:"001",ward:"Titong",bvas_accredited:310,total_votes:305,rejected_votes:5,scores:{APC:180,PDP:80,ADC:30,LP:15},timestamp:new Date().toISOString()},
-      {pu_id:"002",ward:"Gembu A",bvas_accredited:450,total_votes:440,rejected_votes:10,scores:{APC:260,PDP:110,ADC:50,LP:20},timestamp:new Date().toISOString()}
-    ];
-    renderDashboard(cachedGlobalData);
-  }
+  }catch(e){ cachedGlobalData=[]; }
+  renderDashboard(cachedGlobalData);
 }
 function filterResults(){ renderDashboard(cachedGlobalData); }
 function selectWard(w){ document.getElementById('wardFilter').value=w; filterResults(); document.getElementById('resultsAccordionContainer').scrollIntoView({behavior:'smooth'}); }
@@ -169,44 +163,65 @@ function renderDashboard(resultsArray){
   const kw=document.getElementById('searchInput').value.toLowerCase().trim();
   const filtered=resultsArray.filter(r=>{
     const mw = ward==='ALL' || (r.ward && r.ward.includes(ward));
-    const ms = !kw || (r.pu_id && r.pu_id.toLowerCase().includes(kw)) || (r.ward && r.ward.toLowerCase().includes(kw));
+    const ms = !kw || (r.pu_id && String(r.pu_id).toLowerCase().includes(kw)) || (r.ward && r.ward.toLowerCase().includes(kw));
     return mw && ms;
   });
-  // Totals
+  // 100% LIVE TOTALS - no hardcoded fallback
   let totals={}, totalVotes=0;
   resultsArray.forEach(x=>{ Object.entries(x.scores||{}).forEach(([p,v])=>{ totals[p]=(totals[p]||0)+v; totalVotes+=v; }); });
-  // If no live data, show your known totals so page is not empty
-  if(resultsArray.length===0){ totals={APC:6838,PDP:2658,ADC:895,Others:1635}; totalVotes=12026; }
-  if(resultsArray.length>0){
-    document.getElementById('heroPUs').textContent=resultsArray.length;
-    document.getElementById('heroTotalVotes').textContent=totalVotes.toLocaleString();
-    let pct=(resultsArray.length/149*100).toFixed(1);
-    document.getElementById('heroProgressBar').style.width=pct+'%';
-    document.getElementById('heroProgressText').textContent=resultsArray.length+' / 149 PUs - '+pct+'% Reported';
-  }
+  // Add rejected votes to total counted
+  let totalRejected = resultsArray.reduce((a,x)=>a+(x.rejected_votes||0),0);
+  let totalCounted = totalVotes + totalRejected;
+
+  document.getElementById('heroPUs').textContent=resultsArray.length;
+  document.getElementById('heroTotalVotes').textContent=totalCounted.toLocaleString();
+  let pct=(resultsArray.length/149*100).toFixed(1);
+  document.getElementById('heroProgressBar').style.width=pct+'%';
+  document.getElementById('heroProgressText').textContent=resultsArray.length+' / 149 PUs - '+pct+'% Reported';
+
   let parties=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
-  let max=parties[0][1];
-  document.getElementById('leadingBadge').textContent='● '+parties[0][0]+' leading';
-  document.getElementById('heroLeaderText').textContent=parties[0][0]+' is Leading';
-  document.getElementById('leadText2').textContent=parties[0][0]+' is Leading';
-  document.getElementById('topPartiesGrid').innerHTML=parties.map(([p,v])=>{
-    let pct=totalVotes? (v/totalVotes*100).toFixed(1):0;
-    return `<div class="party"><div class="party-info"><b>${p}</b><div class="bar"><div style="width:${pct}%"></div></div></div><div style="text-align:right;"><b>${v.toLocaleString()}</b><br><span style="font-size:12px;color:#777;">${pct}%</span></div></div>`;
+  if(parties.length===0){
+    document.getElementById('leadingBadge').textContent='● No results yet';
+    document.getElementById('heroLeaderText').textContent='Waiting for first result...';
+    document.getElementById('leadText2').textContent='Waiting for results...';
+    document.getElementById('topPartiesGrid').innerHTML='<div style="padding:16px;text-align:center;color:#999;">No results yet. Submit first PU from Situation Room.</div>';
+  } else {
+    let leader=parties[0][0], leaderVotes=parties[0][1];
+    let secondVotes=parties[1]?parties[1][1]:0;
+    let diff=leaderVotes-secondVotes;
+    let leaderPct= totalVotes? (leaderVotes/totalVotes*100).toFixed(1):0;
+    document.getElementById('leadingBadge').textContent='● '+leader+' leading';
+    document.getElementById('heroLeaderText').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes ahead ('+leaderPct+'%)';
+    document.getElementById('leadText2').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes';
+    document.getElementById('topPartiesGrid').innerHTML=parties.map(([p,v])=>{
+      let pPct= totalVotes? (v/totalVotes*100).toFixed(1):0;
+      return `<div class="party"><div class="party-info"><b>${p}</b><div class="bar"><div style="width:${pPct}%"></div></div></div><div style="text-align:right;"><b>${v.toLocaleString()}</b><br><span style="font-size:12px;color:#777;">${pPct}%</span></div></div>`;
+    }).join('');
+  }
+
+  // 100% LIVE WARD TOTALS - calculated from real PUs
+  let wardData={};
+  ['Gembu A','Gembu B','Mayo Ndaga','Titong'].forEach(w=>{ wardData[w]={total:0, apc:0, count:0}; });
+  resultsArray.forEach(x=>{
+    let w=x.ward||'';
+    // Normalize Titong ward name
+    if(w.includes('Titong')) w='Titong';
+    if(!wardData[w]) wardData[w]={total:0, apc:0, count:0};
+    wardData[w].total += x.total_votes||0;
+    wardData[w].apc += (x.scores?.APC||0);
+    wardData[w].count += 1;
+  });
+  document.getElementById('wardSummaryGrid').innerHTML=Object.entries(wardData).map(([name,d])=>{
+    let label = name==='Titong' ? 'Titong ⭐ Home Ward' : name;
+    let isTitong = name==='Titong';
+    return `<button onclick="selectWard('${name}')" style="${isTitong?'border:2px solid #D4A017;':''}"><b>${label}</b><span>${d.count} PUs • ${d.total.toLocaleString()} votes • APC: ${d.apc.toLocaleString()}</span></button>`;
   }).join('');
-  // Wards - use real data if available, else your known numbers
-  let wardAPC={};
-  resultsArray.forEach(x=>{ wardAPC[x.ward]=(wardAPC[x.ward]||0)+(x.scores?.APC||0); });
-  let wards=[['Gembu A',1948],['Gembu B',1746],['Mayo Ndaga',1498],['Titong ⭐ Home Ward',1646]];
-  document.getElementById('wardSummaryGrid').innerHTML=wards.map(([name,def])=>{
-    let val = wardAPC[name.replace(' ⭐ Home Ward','')] || def;
-    let isTitong = name.includes('Titong');
-    return `<button onclick="selectWard('${name.replace(' ⭐ Home Ward','')}')" style="${isTitong?'border:2px solid #D4A017;':''}"><b>${name}</b><span>APC: ${val.toLocaleString()} votes</span></button>`;
-  }).join('');
+
   updateDonutChart(parties);
-  updateBarChart();
-  // PU Feed
+  updateBarChart(wardData);
+
   const c=document.getElementById('resultsAccordionContainer');
-  if(filtered.length===0){ c.innerHTML=`<div style="padding:20px;text-align:center;color:#999;">No polling unit records found.</div>`; }
+  if(filtered.length===0){ c.innerHTML=`<div style="padding:20px;text-align:center;color:#999;">No polling unit records found. ${resultsArray.length===0 ? 'Submit first result from Situation Room.' : ''}</div>`; }
   else{
     c.innerHTML=filtered.map((res,i)=>{
       let sorted=Object.entries(res.scores||{}).sort((a,b)=>b[1]-a[1]);
@@ -221,12 +236,16 @@ function renderDashboard(resultsArray){
 function updateDonutChart(parties){
   const ctx=document.getElementById('partyShareChart').getContext('2d');
   if(partyShareChartInstance) partyShareChartInstance.destroy();
-  partyShareChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:parties.map(p=>p[0]),datasets:[{data:parties.map(p=>p[1]),backgroundColor:['#008751','#dc2626','#2563eb','#D4A017','#888'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  if(parties.length===0){ document.getElementById('chartEmpty').style.display='block'; return; }
+  document.getElementById('chartEmpty').style.display='none';
+  partyShareChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:parties.map(p=>p[0]),datasets:[{data:parties.map(p=>p[1]),backgroundColor:['#008751','#dc2626','#2563eb','#D4A017','#888','#9333ea','#06b6d4','#f97316'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
 }
-function updateBarChart(){
+function updateBarChart(wardData){
   const ctx=document.getElementById('wardTurnoutChart').getContext('2d');
   if(wardTurnoutChartInstance) wardTurnoutChartInstance.destroy();
-  wardTurnoutChartInstance=new Chart(ctx,{type:'bar',data:{labels:['Gembu A','Gembu B','Mayo Ndaga','Titong'],datasets:[{label:'Total Votes Cast',data:[3412,3117,2583,2914],backgroundColor:'#0A1F44',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  let labels=Object.keys(wardData);
+  let data=labels.map(w=>wardData[w].total);
+  wardTurnoutChartInstance=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Total Votes Cast',data:data,backgroundColor:'#0A1F44',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
 }
 fetchResults();
 setInterval(fetchResults,60000);
