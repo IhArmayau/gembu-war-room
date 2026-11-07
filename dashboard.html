@@ -29,7 +29,7 @@ body{background:#f6f7f5;color:#111}
 .section{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .section small{color:#0A1F44;font-weight:700;font-size:13px}
 .section h2{font-size:22px;margin-top:2px}
-.badge{background:#0A1F44;color:#D4A017;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge{background:#0A1F44;color:#D4A017;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px}
 .party{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f0f0}
 .party:last-child{border:none}
 .party-info{flex:1}
@@ -80,8 +80,8 @@ body{background:#f6f7f5;color:#111}
   <div class="grid">
     <div class="card"><b>4</b><span>Wards</span></div>
     <div class="card"><b>149</b><span>Polling Units</span></div>
-    <div class="card"><b><span id="heroPUs">0</span> / 149</b><span>Polling units reported</span></div>
-    <div class="card"><b id="heroTotalVotes">0</b><span>Total votes counted</span></div>
+    <div class="card"><b style="font-size:20px;white-space:nowrap;"><span id="heroPUs">0</span> / 149</b><span>Polling units reported</span></div>
+    <div class="card"><b id="heroTotalVotes" style="font-size:20px;white-space:nowrap;">0</b><span>Total votes counted</span></div>
   </div>
   <div class="progress"><div id="heroProgressBar"></div></div>
   <div class="progress-text"><span id="heroProgressText">0 / 149 PUs - 0% Reported</span> • <span id="heroLeaderText">Waiting for first result...</span></div>
@@ -253,7 +253,9 @@ function renderDashboard(resultsArray){
     let secondVotes=parties[1]?parties[1][1]:0;
     let diff=leaderVotes-secondVotes;
     let leaderPct= totalVotes? (leaderVotes/totalVotes*100).toFixed(1):0;
-    document.getElementById('leadingBadge').textContent='● '+leader+' leading';
+    var leaderLogo = (PARTIES[leader] && PARTIES[leader].logo) ? PARTIES[leader].logo : '';
+    var leaderLogoHtml = leaderLogo ? '<img src="'+leaderLogo+'" style="width:22px;height:22px;object-fit:contain;background:#fff;border-radius:50%;vertical-align:middle;margin-right:4px;" onerror="this.style.display=\'none\'">' : '';
+    document.getElementById('leadingBadge').innerHTML = leaderLogoHtml + '● ' + leader + ' leading';
     document.getElementById('heroLeaderText').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes ahead ('+leaderPct+'%)';
     document.getElementById('leadText2').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes';
     let top3=parties.slice(0,3);
