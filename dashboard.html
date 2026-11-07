@@ -3,26 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gembu Constituency Official Results Portal | GSSS Gembu</title>
+    <title>Gembu Constituency Results Portal | GSSS Gembu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#ecfdf5',
-                            500: '#059669',
-                            600: '#047857',
-                            750: '#065f46',
-                            900: '#022c22'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -37,32 +20,21 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 antialiased font-sans custom-scrollbar selection:bg-emerald-600 selection:text-white">
 
-    <!-- Official Header Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-45 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xl shadow-md border border-emerald-800">
-                    🇳🇬
-                </div>
-                <div>
-                    <div class="flex items-center gap-2.5">
-                        <h1 class="text-base md:text-lg font-extrabold tracking-tight text-slate-900 uppercase">Gembu Constituency Results Portal</h1>
-                        <span id="connectionBadge" class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-2">
-                        <span>Collation Center: <strong>GSSS Gembu</strong></span>
-                        <span class="text-slate-300">•</span>
-                        <span>Wards: Gembu A, Gembu B, Mayo Ndaga, Titong</span>
-                    </p>
-                </div>
+    <!-- Fixed Header (z-40) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-lg font-black tracking-tight text-slate-900 uppercase">Gembu Constituency</h1>
+                <p class="text-xs text-slate-600 font-medium mt-0.5">Gembu A, Gembu B, Mayo Ndaga, Titong</p>
+                <p id="liveStatusText" class="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE - Updated just now - Refreshes every minute
+                </p>
             </div>
             
-            <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-3 flex-wrap w-full md:w-auto justify-start md:justify-end">
                 <!-- Ward Filter Dropdown -->
                 <div class="flex items-center bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200">
-                    <label for="wardFilter" class="text-xs text-slate-600 mr-2 font-medium">Ward Scope:</label>
+                    <label for="wardFilter" class="text-xs text-slate-600 mr-2 font-medium">Ward:</label>
                     <select id="wardFilter" onchange="filterResults()" class="bg-white text-slate-800 text-xs font-semibold focus:outline-none cursor-pointer py-1 px-2 rounded border border-slate-300 focus:border-emerald-600">
                         <option value="ALL">All 4 Wards (149 PUs)</option>
                         <option value="Gembu A">Gembu A Ward</option>
@@ -73,13 +45,13 @@
                 </div>
 
                 <!-- Export CSV Button -->
-                <button onclick="exportCsv()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                <button onclick="exportCsv()" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     Export CSV
                 </button>
 
                 <!-- Manual Refresh Button -->
-                <button onclick="fetchResults()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                <button onclick="fetchResults()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Refresh
                 </button>
@@ -90,128 +62,95 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-        <!-- Top Macro Cards (2x2 Grid Layout with Progress Bar) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <!-- Card 1: Reporting Units -->
-            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Reporting Polling Units</span>
-                    <div class="flex items-baseline justify-between mt-2">
-                        <span id="totalUnits" class="text-3xl font-black text-slate-900">0 / 149</span>
-                        <span id="reportingPercentage" class="text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">0%</span>
+        <!-- Unified Hero Section & Audit Logic -->
+        <div class="portal-card p-6 rounded-2xl bg-gradient-to-r from-emerald-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-3">
+                        <span id="heroTotalVotes" class="text-4xl font-black tracking-tight">0</span>
+                        <span class="text-xs uppercase tracking-wider bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-1 rounded-md border border-emerald-500/30">Total Votes Counted</span>
+                    </div>
+                    <p id="heroLeaderText" class="text-sm md:text-base font-semibold text-emerald-200">
+                        Awaiting polling unit data streams from GSSS Gembu...
+                    </p>
+                    <div id="heroAlertContainer" class="pt-1">
+                        <!-- Dynamic audit status injected here -->
                     </div>
                 </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-100 rounded-full h-2 mt-4 overflow-hidden border border-slate-200">
-                    <div id="reportingProgressBar" class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-            </div>
 
-            <!-- Card 2: BVAS Accredited -->
-            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total BVAS Accredited</span>
-                    <div class="flex items-baseline justify-between mt-2">
-                        <span id="totalBvasAccredited" class="text-3xl font-black text-slate-900">0</span>
-                        <span class="text-xs text-slate-500 font-medium">Gembu Constituency</span>
+                <div class="w-full md:w-80 bg-slate-950/50 p-4 rounded-xl border border-slate-700/60 backdrop-blur-md">
+                    <div class="flex justify-between items-center text-xs mb-2">
+                        <span id="heroProgressText" class="font-bold text-slate-300">0 / 149 PUs - 0% Reported</span>
+                        <span id="heroStatusBadge" class="text-[10px] text-emerald-400 font-bold uppercase">Collating</span>
                     </div>
-                </div>
-                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
-                    <span>Accreditation Verified</span>
-                    <span class="text-emerald-700 font-bold">100% Secure</span>
-                </div>
-            </div>
-
-            <!-- Card 3: Total Votes Cast -->
-            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Votes Cast</span>
-                    <div class="flex items-baseline justify-between mt-2">
-                        <span id="totalVotesCast" class="text-3xl font-black text-slate-900">0</span>
-                        <span id="rejectedVotesTotal" class="text-xs text-slate-500 font-medium">(Rej: 0)</span>
+                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div id="heroProgressBar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
-                </div>
-                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
-                    <span>Valid Ballots Recorded</span>
-                    <span class="text-slate-700 font-bold">EC8A Collated</span>
-                </div>
-            </div>
-
-            <!-- Card 4: Audit & Over-Voting Flags -->
-            <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
-                <div>
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Audit & Security Flags</span>
-                    <div class="flex items-baseline justify-between mt-2">
-                        <span id="overVotingCount" class="text-3xl font-black text-amber-600">0</span>
-                        <span class="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 font-bold">Over-Voting Alerts</span>
-                    </div>
-                </div>
-                <div class="text-[11px] text-slate-400 mt-4 pt-3 border-t border-slate-100 flex justify-between">
-                    <span>System Integrity Check</span>
-                    <span class="text-slate-700 font-bold">Active Monitor</span>
                 </div>
             </div>
         </div>
 
-        <!-- Visual Analytics Section (Charts) -->
+        <!-- Dynamic Top 4 Party Standings Grid -->
+        <div class="space-y-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span>🏆</span> Top Party Standings (Gembu Constituency)
+            </h2>
+            <div id="topPartiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Visual Analytics Section -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Party Share Doughnut Chart -->
+            <!-- Donut Chart & Legend -->
             <div class="portal-card p-6 rounded-xl flex flex-col justify-between">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                         <span class="text-emerald-600">🍩</span> Vote Share Distribution
                     </h2>
                 </div>
-                <div class="relative h-64 flex items-center justify-center">
+                <div class="relative h-48 flex items-center justify-center">
                     <canvas id="partyShareChart"></canvas>
+                </div>
+                <div id="donutLegendList" class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
 
-            <!-- Ward Turnout Bar Chart -->
+            <!-- Ward-by-Ward Bar Chart -->
             <div class="portal-card p-6 rounded-xl lg:col-span-2 flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                         <span class="text-emerald-600">📈</span> Ward-by-Ward Vote Turnout
                     </h2>
                 </div>
-                <div class="relative h-64">
+                <!-- Non-blocking notice above chart -->
+                <div id="barChartNotice" class="mb-3 bg-amber-50 text-amber-800 border border-amber-200 px-3 py-2 rounded-lg text-xs font-semibold hidden">
+                    ⏳ Waiting for additional wards to report (Gembu B, Mayo Ndaga, Titong) for full comparative turnout.
+                </div>
+                <div class="relative h-60">
                     <canvas id="wardTurnoutChart"></canvas>
                 </div>
-            </div>
-        </div>
-
-        <!-- Constituency Party Standings Grid -->
-        <div class="portal-card p-6 rounded-xl">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-slate-100 pb-4">
-                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <span class="text-emerald-600">📊</span> Cumulative Constituency Party Standings 
-                    <span class="text-xs font-normal text-slate-500">(4 Wards Overview)</span>
-                </h2>
-                <span id="constituencyLeaderBadge" class="self-start sm:self-auto bg-emerald-50 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold border border-emerald-200">
-                    Leading: Pending
-                </span>
-            </div>
-            <div id="constituencyPartyGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div class="text-xs text-slate-400 col-span-full py-4 text-center">Calculating Ward totals...</div>
             </div>
         </div>
 
         <!-- Ward-Level Summary Cards -->
         <div class="space-y-4">
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                <span class="text-emerald-600">🏘️</span> 4-Ward Collation Summary (Gembu A, Gembu B, Mayo Ndaga, Titong)
+                <span>🏘️</span> 4-Ward Collation Summary (Gembu A, Gembu B, Mayo Ndaga, Titong)
             </h2>
             <div id="wardSummaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Rendered dynamically -->
             </div>
         </div>
 
-        <!-- Polling Unit Data Feed (Dropdown Accordion Layout) -->
+        <!-- Polling Unit Feed -->
         <div class="portal-card rounded-xl overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between items-md-center gap-4 bg-slate-50">
+            <div class="px-6 py-5 border-b border-slate-200 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-slate-50">
                 <div>
                     <h2 class="font-bold text-slate-900 text-base">Polling Unit Feed (149 Total Units)</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Tap any unit row to inspect party breakdown, EC8A photo evidence, and forensic security hashes</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Tap any unit row to inspect full 18-party breakdown, EC8A photo evidence, and forensic security hashes</p>
                 </div>
                 
                 <!-- Quick Search Input -->
@@ -266,25 +205,20 @@
         let wardTurnoutChartInstance = null;
 
         async function fetchResults() {
-            const badge = document.getElementById('connectionBadge');
             try {
                 const response = await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
                 const data = await response.json();
                 
                 cachedGlobalData = data.results || [];
-                
-                badge.className = "inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase";
-                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE`;
+                document.getElementById('liveStatusText').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE - Updated ${new Date().toLocaleTimeString()} - Refreshes every minute`;
                 
                 renderDashboard(cachedGlobalData);
             } catch (error) {
                 console.error('Failed to connect to backend:', error);
-                badge.className = "inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full border border-rose-200 uppercase";
-                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> OFFLINE`;
-                
+                document.getElementById('liveStatusText').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> OFFLINE - Reconnecting to GSSS Gembu Command Hub...`;
                 document.getElementById('resultsAccordionContainer').innerHTML = `
                     <div class="px-6 py-10 text-center text-rose-600 font-medium bg-rose-50">
-                        Connection error! Check Node.js server connection at GSSS Gembu Command Hub.
+                        Connection error! Check Node.js server connection at GSSS Gembu Collation Center.
                     </div>`;
             }
         }
@@ -332,10 +266,9 @@
                 return matchesWard && matchesSearch;
             });
 
-            let overVotingTotal = 0;
             let totalBvas = 0;
             let totalVotes = 0;
-            let totalRejected = 0;
+            let overVotingCount = 0;
             const partyCumulativeMap = {};
             const wardMap = {
                 'Gembu A': { units: 0, totalVotes: 0, overVotes: 0, parties: {} },
@@ -345,10 +278,9 @@
             };
 
             filteredResults.forEach(res => {
-                if (res.is_over_voting) overVotingTotal++;
                 totalBvas += (res.bvas_accredited || 0);
                 totalVotes += (res.total_votes || 0);
-                totalRejected += (res.rejected_votes || 0);
+                if (res.is_over_voting) overVotingCount++;
 
                 Object.entries(res.scores || {}).forEach(([party, votes]) => {
                     partyCumulativeMap[party] = (partyCumulativeMap[party] || 0) + votes;
@@ -367,41 +299,89 @@
                 });
             });
 
-            document.getElementById('totalUnits').innerText = `${filteredResults.length} / ${TOTAL_CONSTITUENCY_PUS}`;
-            const reportingPct = Math.round((filteredResults.length / TOTAL_CONSTITUENCY_PUS) * 100);
-            document.getElementById('reportingPercentage').innerText = `${reportingPct}% Reported`;
-            document.getElementById('reportingProgressBar').style.width = `${reportingPct}%`;
-            
-            document.getElementById('totalBvasAccredited').innerText = totalBvas.toLocaleString();
-            document.getElementById('totalVotesCast').innerText = totalVotes.toLocaleString();
-            document.getElementById('rejectedVotesTotal').innerText = `(Rej: ${totalRejected.toLocaleString()})`;
-            document.getElementById('overVotingCount').innerText = overVotingTotal;
-
-            updateCharts(partyCumulativeMap, wardMap);
+            // Hero Section Updates
+            const reportingCount = filteredResults.length;
+            const reportingPct = Math.round((reportingCount / TOTAL_CONSTITUENCY_PUS) * 100);
+            document.getElementById('heroTotalVotes').innerText = totalVotes.toLocaleString();
+            document.getElementById('heroProgressText').innerText = `${reportingCount} / ${TOTAL_CONSTITUENCY_PUS} PUs - ${reportingPct}% Reported`;
+            document.getElementById('heroProgressBar').style.width = `${reportingPct}%`;
 
             const sortedPartyCumulative = Object.entries(partyCumulativeMap).sort((a, b) => b[1] - a[1]);
-            const partyGrid = document.getElementById('constituencyPartyGrid');
-            partyGrid.innerHTML = '';
-
+            
             if (sortedPartyCumulative.length > 0) {
                 const leader = sortedPartyCumulative[0];
-                document.getElementById('constituencyLeaderBadge').innerText = `Leading: ${leader[0]} (${leader[1].toLocaleString()}v)`;
-
-                sortedPartyCumulative.forEach(([party, votes], idx) => {
-                    const isTop = idx === 0;
-                    partyGrid.innerHTML += `
-                        <div class="p-3 rounded-lg border ${isTop ? 'bg-emerald-50 border-emerald-300 text-slate-900 shadow-sm' : 'bg-white border-slate-200 text-slate-700'}">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold ${isTop ? 'text-emerald-800' : 'text-slate-600'}">${party}</span>
-                                <span class="font-extrabold ${isTop ? 'text-emerald-700' : 'text-slate-900'}">${votes.toLocaleString()}</span>
-                            </div>
-                        </div>
-                    `;
-                });
+                const runnerUp = sortedPartyCumulative[1] ? sortedPartyCumulative[1][1] : 0;
+                const margin = leader[1] - runnerUp;
+                document.getElementById('heroLeaderText').innerText = `${leader[0]} is Leading + ${margin.toLocaleString()} votes ahead (${((leader[1] / (totalVotes || 1)) * 100).toFixed(1)}%)`;
             } else {
-                partyGrid.innerHTML = `<div class="text-xs text-slate-400 col-span-full py-2 text-center">No scores recorded yet.</div>`;
+                document.getElementById('heroLeaderText').innerText = `Awaiting polling unit data streams from GSSS Gembu...`;
             }
 
+            // Audit Status Logic
+            const alertContainer = document.getElementById('heroAlertContainer');
+            if (totalVotes === 0) {
+                alertContainer.innerHTML = `
+                    <div class="inline-flex items-center gap-2 bg-slate-800 text-slate-300 text-xs font-bold px-3 py-1 rounded-md">
+                        <span>⏳</span> Awaiting data streams... Collation standing by.
+                    </div>
+                `;
+            } else if (totalVotes > totalBvas && totalBvas > 0) {
+                const excess = totalVotes - totalBvas;
+                alertContainer.innerHTML = `
+                    <div class="inline-flex items-center gap-2 bg-rose-500/20 text-rose-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-rose-500/40">
+                        <span>🚨</span> Over-Voting Alert: +${excess.toLocaleString()} excess votes recorded above BVAS accreditation!
+                    </div>
+                `;
+            } else if (overVotingCount > 0) {
+                alertContainer.innerHTML = `
+                    <div class="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-amber-500/40">
+                        <span>⚠️</span> ${overVotingCount} Polling Unit(s) flagged for accreditation mismatch.
+                    </div>
+                `;
+            } else {
+                alertContainer.innerHTML = `
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-300 text-xs font-bold px-3 py-1 rounded-md">
+                        <span>🔒</span> Accreditation & Ballot Audit: 100% Verified Match
+                    </div>
+                `;
+            }
+
+            // Dynamic Top 4 Party Cards Generation
+            const topPartiesGrid = document.getElementById('topPartiesGrid');
+            topPartiesGrid.innerHTML = '';
+            const cardAccents = [
+                { border: 'border-l-emerald-600', bg: 'bg-emerald-50', text: 'text-emerald-700', borderCol: 'border-emerald-200' },
+                { border: 'border-l-blue-600', bg: 'bg-blue-50', text: 'text-blue-700', borderCol: 'border-blue-200' },
+                { border: 'border-l-red-600', bg: 'bg-red-50', text: 'text-red-700', borderCol: 'border-red-200' },
+                { border: 'border-l-amber-600', bg: 'bg-amber-50', text: 'text-amber-700', borderCol: 'border-amber-200' }
+            ];
+
+            for (let i = 0; i < 4; i++) {
+                const partyEntry = sortedPartyCumulative[i];
+                const partyName = partyEntry ? partyEntry[0] : `PARTY ${i+1}`;
+                const partyVotes = partyEntry ? partyEntry[1] : 0;
+                const partyPct = totalVotes > 0 ? ((partyVotes / totalVotes) * 100).toFixed(1) : 0;
+                const style = cardAccents[i];
+
+                topPartiesGrid.innerHTML += `
+                    <div class="portal-card p-5 rounded-xl flex items-center justify-between border-l-4 ${style.border}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg ${style.bg} ${style.text} font-black text-sm flex items-center justify-center border ${style.borderCol} shadow-sm">${partyName}</div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-700 uppercase">${partyName} — Rank #${i+1}</h4>
+                                <span class="text-2xl font-black text-slate-900">${partyVotes.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">${partyPct}%</span>
+                    </div>
+                `;
+            }
+
+            // Donut Chart & Bar Chart Updates
+            updateDonutChart(partyCumulativeMap, totalVotes);
+            updateBarChart(wardMap);
+
+            // Render Ward Summary Cards
             const wardGrid = document.getElementById('wardSummaryGrid');
             wardGrid.innerHTML = '';
 
@@ -418,7 +398,7 @@
                         </div>`)
                     .join('');
 
-                let card = `
+                wardGrid.innerHTML += `
                     <div class="portal-card p-5 rounded-xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
@@ -438,9 +418,9 @@
                         </div>
                     </div>
                 `;
-                wardGrid.innerHTML += card;
             });
 
+            // Render Polling Unit Dropdown Feed
             const container = document.getElementById('resultsAccordionContainer');
             container.innerHTML = '';
 
@@ -484,7 +464,7 @@
                         `;
                     }
 
-                    let accordionItem = `
+                    container.innerHTML += `
                         <div class="transition hover:bg-slate-50/80">
                             <!-- Main Visible Row (Tap to expand) -->
                             <div onclick="toggleDropdown(${index})" class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer select-none">
@@ -519,7 +499,7 @@
                             <div id="dropdown_${index}" class="hidden px-6 pb-5 pt-2 bg-slate-50 border-t border-slate-100 space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Complete Party Breakdown</h4>
+                                        <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Complete Party Breakdown (All 18 Parties)</h4>
                                         <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
                                             ${partyRows || '<span class="text-xs text-slate-400">No party votes recorded</span>'}
                                         </div>
@@ -537,28 +517,44 @@
                             </div>
                         </div>
                     `;
-                    container.innerHTML += accordionItem;
                 });
             }
         }
 
-        function updateCharts(partyMap, wardMap) {
-            const parties = Object.keys(partyMap);
-            const partyVotes = Object.values(partyMap);
+        // Donut Chart Logic (Top 4 + Others Only, 5 Colors Max)
+        function updateDonutChart(partyMap, totalVotes) {
+            const sorted = Object.entries(partyMap).sort((a, b) => b[1] - a[1]);
+            const top4 = sorted.slice(0, 4);
+            const othersVotes = sorted.slice(4).reduce((sum, [_, v]) => sum + v, 0);
 
-            const doughnutCtx = document.getElementById('partyShareChart').getContext('2d');
+            const labels = top4.map(([p]) => p);
+            const data = top4.map(([_, v]) => v);
+
+            if (othersVotes > 0) {
+                labels.push('Others');
+                data.push(othersVotes);
+            }
+
+            if (labels.length === 0) {
+                labels.push('Pending');
+                data.push(1);
+            }
+
+            const colors = ['#059669', '#2563eb', '#dc2626', '#d97706', '#64748b'];
+
+            const ctx = document.getElementById('partyShareChart').getContext('2d');
             if (partyShareChartInstance) {
-                partyShareChartInstance.data.labels = parties.length ? parties : ['Pending'];
-                partyShareChartInstance.data.datasets[0].data = partyVotes.length ? partyVotes : [1];
+                partyShareChartInstance.data.labels = labels;
+                partyShareChartInstance.data.datasets[0].data = data;
                 partyShareChartInstance.update();
             } else {
-                partyShareChartInstance = new Chart(doughnutCtx, {
+                partyShareChartInstance = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: parties.length ? parties : ['Pending'],
+                        labels: labels,
                         datasets: [{
-                            data: partyVotes.length ? partyVotes : [1],
-                            backgroundColor: ['#047857', '#2563eb', '#d97706', '#db2777', '#7c3aed', '#64748b', '#065f46'],
+                            data: data,
+                            backgroundColor: colors,
                             borderWidth: 2,
                             borderColor: '#ffffff'
                         }]
@@ -567,32 +563,57 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: '#475569', font: { size: 10 }, boxWidth: 12 }
-                            }
+                            legend: { display: false }
                         }
                     }
                 });
             }
 
+            // Render Clean List Legend Underneath
+            const legendContainer = document.getElementById('donutLegendList');
+            legendContainer.innerHTML = '';
+            labels.forEach((lbl, idx) => {
+                const val = data[idx];
+                const pct = totalVotes > 0 ? ((val / totalVotes) * 100).toFixed(1) : 0;
+                legendContainer.innerHTML += `
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${colors[idx]}"></span>
+                            ${lbl}
+                        </span>
+                        <span class="font-semibold text-slate-700">${val.toLocaleString()} (${pct}%)</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Ward-by-Ward Bar Chart Logic (Notice above chart)
+        function updateBarChart(wardMap) {
             const wardNames = Object.keys(wardMap);
             const wardTurnoutVotes = wardNames.map(w => wardMap[w].totalVotes);
+            const reportingWardsCount = wardTurnoutVotes.filter(v => v > 0).length;
 
-            const barCtx = document.getElementById('wardTurnoutChart').getContext('2d');
+            const noticeBox = document.getElementById('barChartNotice');
+            if (reportingWardsCount <= 1) {
+                noticeBox.classList.remove('hidden');
+            } else {
+                noticeBox.classList.add('hidden');
+            }
+
+            const ctx = document.getElementById('wardTurnoutChart').getContext('2d');
             if (wardTurnoutChartInstance) {
                 wardTurnoutChartInstance.data.labels = wardNames;
                 wardTurnoutChartInstance.data.datasets[0].data = wardTurnoutVotes;
                 wardTurnoutChartInstance.update();
             } else {
-                wardTurnoutChartInstance = new Chart(barCtx, {
+                wardTurnoutChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: wardNames,
                         datasets: [{
                             label: 'Total Votes Cast',
                             data: wardTurnoutVotes,
-                            backgroundColor: '#047857',
+                            backgroundColor: '#059669',
                             borderRadius: 6,
                             borderSkipped: false
                         }]
@@ -612,9 +633,9 @@
             }
         }
 
-        // Initial fetch and auto-refresh every 5 seconds
+        // Initial fetch and auto-refresh every 60 seconds
         fetchResults();
-        setInterval(fetchResults, 5000);
+        setInterval(fetchResults, 60000);
     </script>
 </body>
 </html>
