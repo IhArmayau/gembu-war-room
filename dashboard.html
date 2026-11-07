@@ -3,74 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gembu Constituency — Mambilla Plateau | State Assembly 2027</title>
+<title>Gembu Constituency - State Assembly Election Results</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:#f2f3f7;color:#111}
-.top{background:#0A1F44;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;border-bottom:3px solid #D4A017}
+.top{background:#0A1F44;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #D4A017;position:sticky;top:0;z-index:20}
 .logo-row{display:flex;align-items:center;gap:10px}
-.logo{width:42px;height:42px;border-radius:10px;background:#D4A017;color:#0A1F44;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
+.logo{width:40px;height:40px;border-radius:10px;background:#D4A017;color:#0A1F44;display:flex;align-items:center;justify-content:center;font-weight:900}
 .logo-row b{font-size:15px;line-height:1.1;display:block}
-.logo-row span{font-size:11px;color:#cbd5e1}
-.hero{background:linear-gradient(135deg,#0A1F44 0%,#132f5e 70%,#1a3a6b 100%);color:#fff;padding:22px 16px 20px;border-bottom:3px solid #D4A017}
+.logo-row span{font-size:12px;color:#cbd5e1}
+.hero{background:linear-gradient(135deg,#0A1F44,#132f5e);color:#fff;padding:22px 16px 20px}
 .live{color:#D4A017;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
-.live i{width:8px;height:8px;background:#ff4d4d;border-radius:50%;display:inline-block;animation:pulse 1s infinite}
-@keyframes pulse{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
-.hero h1{font-size:32px;line-height:1.05;margin:10px 0 4px;font-weight:900}
+.live i{width:8px;height:8px;background:#ff4d4d;border-radius:50%;display:inline-block}
+.hero h1{font-size:32px;line-height:1.05;margin:10px 0 6px;font-weight:900}
 .hero h1 span{color:#D4A017}
-.hero p{color:#cbd5e1;font-size:13px}
+.hero p{color:#cbd5e1;font-size:14px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
 .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
-.card b{font-size:26px;display:block;color:#fff}
-.card b i{color:#D4A017;font-style:normal}
-.card span{font-size:12px;color:#cbd5e1;display:block;margin-top:4px}
+.card b{font-size:26px;display:block}
+.card span{font-size:13px;color:#cbd5e1;display:block;margin-top:6px}
 .progress{height:8px;background:rgba(255,255,255,.15);border-radius:20px;margin-top:16px;overflow:hidden}
-.progress div{height:100%;background:#D4A017;width:0%;transition:width .5s}
+.progress div{height:100%;background:#D4A017;width:0%}
 .progress-text{font-size:13px;color:#e2e8f0;margin-top:8px}
 .controls{display:flex;gap:10px;padding:12px 12px 0}
 .controls select,.controls button{flex:1;padding:11px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:600}
 .controls button{background:#0A1F44;color:#fff;border:none}
-.controls button.gold{background:#D4A017;color:#0A1F44}
 .section{background:#fff;margin:12px;padding:16px;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.06);border-top:3px solid #0A1F44}
-.section small{color:#0A1F44;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-.section h2{font-size:20px;margin-top:2px}
+.section small{color:#0A1F44;font-weight:800;font-size:13px;text-transform:uppercase}
+.section h2{font-size:22px;margin-top:2px}
 .badge{background:#0A1F44;color:#D4A017;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.party{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #f0f0f0}
+.party{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f0f0}
 .party:last-child{border:none}
 .party-info{flex:1}
 .bar{height:8px;background:#eee;border-radius:20px;margin-top:6px;overflow:hidden}
 .bar div{height:100%;background:#0A1F44}
 .candidate{display:flex;gap:12px;align-items:center;background:#FFF8E1;padding:12px;border-radius:12px;margin-top:14px;border:1px solid #FDE68A}
-.candidate img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:2px solid #D4A017}
+.candidate img{width:56px;height:56px;border-radius:10px;object-fit:cover;border:2px solid #D4A017}
 .candidate b{font-size:14px;color:#0A1F44}
 .candidate span{font-size:12px;color:#666;display:block}
 .ward-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.ward-grid button{background:#0A1F44;color:#fff;padding:16px;border-radius:12px;text-align:left;border:none;cursor:pointer;position:relative;overflow:hidden}
+.ward-grid button{background:#0A1F44;color:#fff;padding:16px;border-radius:12px;text-align:left;border:none;cursor:pointer}
 .ward-grid button b{display:block}
 .ward-grid button span{color:#D4A017;font-size:12px}
 .pu{border-bottom:1px solid #f0f0f0;padding:14px 0;cursor:pointer}
 .pu b{font-size:14px}
 .pu p{font-size:12px;color:#666}
 .pu-detail{display:none;background:#f8faf8;padding:12px;border-radius:10px;margin-top:10px;font-size:13px}
-.footer{text-align:center;padding:18px;font-size:11px;color:#94a3b8;background:#0A1F44;color:#fff;border-top:3px solid #D4A017}
-.footer b{color:#D4A017}
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px}
-.legend span{display:flex;align-items:center;gap:5px}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.footer{text-align:center;padding:16px;font-size:11px;color:#fff;background:#0A1F44;border-top:3px solid #D4A017}
 </style>
 </head>
 <body>
 
 <div class="top">
-  <div class="logo-row"><div class="logo">G</div><div><b>GEMBU CONSTITUENCY</b><span>Mambilla Plateau • Taraba State Assembly</span></div></div>
+  <div class="logo-row"><div class="logo">G</div><div><b>Gembu Constituency</b><span>Mambilla Plateau • State Assembly</span></div></div>
   <div style="background:#D4A017;color:#0A1F44;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:800;">● LIVE</div>
 </div>
 
 <div class="hero">
-  <div class="live"><i></i> LIVE RESULTS • GEMBU COLLATION CENTRE • GSSS GEMBU</div>
+  <div class="live"><i></i> LIVE RESULTS • UPDATES EVERY MINUTE</div>
   <h1>Gembu <span>Constituency</span></h1>
-  <p>Mambilla Plateau • Gembu A • Gembu B • Mayo Ndaga • Titong ⭐ Home Ward</p>
+  <p>Gembu A • Gembu B • Mayo Ndaga • Titong</p>
   <div class="grid">
     <div class="card"><b>4</b><span>Wards</span></div>
     <div class="card"><b>149</b><span>Polling Units</span></div>
@@ -90,12 +83,12 @@ body{background:#f2f3f7;color:#111}
     <option value="Titong">Titong Ward ⭐</option>
   </select>
   <button onclick="exportCsv()">Export CSV</button>
-  <button onclick="fetchResults()" class="gold">Refresh</button>
+  <button onclick="fetchResults()">Refresh</button>
 </div>
 
 <div class="section">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-    <div><small>Gembu Constituency Total • Mambilla</small><h2>Votes by Party</h2></div>
+    <div><small>Constituency total • Mambilla</small><h2>Votes by party</h2></div>
     <div class="badge" id="leadingBadge">● No results yet</div>
   </div>
   <div id="topPartiesGrid" style="margin-top:12px;"></div>
@@ -106,31 +99,29 @@ body{background:#f2f3f7;color:#111}
 </div>
 
 <div class="section">
-  <small>Ward Breakdown • 4 Wards</small>
+  <small>Ward Breakdown</small>
   <h2 style="font-size:18px;margin-top:4px;">Tap a ward to filter results</h2>
   <div class="ward-grid" id="wardSummaryGrid"></div>
-  <p style="font-size:11px;color:#888;margin-top:8px;">■ Navy = Gembu Ward &nbsp; ■ Gold Border = Home Ward (Titong) &nbsp; ■ Different from Taraba Senatorial Dashboard</p>
+  <p style="font-size:11px;color:#888;margin-top:8px;">■ Navy = Gembu • Gold Border = Home Ward (Titong) • Different from Taraba Senatorial (Green)</p>
 </div>
 
 <div class="section">
-  <small>Visual Analytics • Gembu Only</small>
-  <h2 style="font-size:18px;">Vote Share — Top 3 + Others</h2>
-  <div style="height:210px;margin-top:12px;"><canvas id="partyShareChart"></canvas></div>
-  <div class="legend"><span><i class="dot" style="background:#0A1F44"></i>1st Party</span><span><i class="dot" style="background:#D4A017"></i>2nd Party</span><span><i class="dot" style="background:#64748b"></i>3rd Party</span><span><i class="dot" style="background:#e2e8f0"></i>Others</span></div>
-  <h2 style="font-size:18px;margin-top:16px;">Ward Turnout</h2>
-  <div style="height:200px;margin-top:12px;"><canvas id="wardTurnoutChart"></canvas></div>
+  <small>Visual Analytics</small>
+  <h2 style="font-size:18px;">Vote Share — Top 3 + Others & Ward Turnout</h2>
+  <div style="height:200px;margin-top:12px;"><canvas id="partyShareChart"></canvas></div>
+  <div style="height:200px;margin-top:16px;"><canvas id="wardTurnoutChart"></canvas></div>
   <p id="chartEmpty" style="text-align:center;color:#999;font-size:13px;margin-top:10px;">Charts will appear after first PU is submitted.</p>
 </div>
 
 <div class="section">
-  <small>Polling Unit Feed • Gembu</small>
+  <small>Polling Unit Feed</small>
   <h2 style="font-size:18px;">Polling Unit Feed (149 Total Units)</h2>
   <p style="font-size:12px;color:#777;margin-top:4px;">Tap any unit row to inspect full party breakdown & EC8A photo evidence</p>
   <input type="text" id="searchInput" onkeyup="filterResults()" placeholder="Search PU Code or Ward Name..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:10px;">
   <div id="resultsAccordionContainer"></div>
 </div>
 
-<div class="footer"><b>GEMBU COLLATION CENTRE</b><br>Data from Accredited Party Agents • GSSS Gembu • Not an Official INEC Declaration • © 2026 • Updated <span id="updated">Just now</span></div>
+<div class="footer">Gembu Collation Centre • GSSS Gembu • Data from Accredited Party Agents • Not an Official INEC Declaration • © 2026 • Updated <span id="updated">Just now</span></div>
 
 <div id="imageModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#fff;border-radius:14px;max-width:600px;width:100%;padding:16px;">
@@ -247,7 +238,6 @@ function updateDonutChart(parties){
   if(partyShareChartInstance) partyShareChartInstance.destroy();
   if(parties.length===0){ document.getElementById('chartEmpty').style.display='block'; return; }
   document.getElementById('chartEmpty').style.display='none';
-  // TOP 3 + OTHERS ONLY - Gembu style, not rainbow
   let top3 = parties.slice(0,3);
   let othersTotal = parties.slice(3).reduce((a,p)=>a+p[1],0);
   let labels = top3.map(p=>p[0]);
@@ -267,4 +257,4 @@ fetchResults();
 setInterval(fetchResults,60000);
 </script>
 </body>
-  </html>
+</html>
