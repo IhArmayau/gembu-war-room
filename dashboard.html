@@ -33,6 +33,10 @@ body{background:#f6f7f5;color:#111}
 .party{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f0f0}
 .party:last-child{border:none}
 .party-info{flex:1}
+.party-logo{width:44px;height:44px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #eee;flex-shrink:0}
+.party-logo-fallback{width:44px;height:44px;border-radius:8px;background:#0A1F44;color:#D4A017;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+.party-name{font-size:14px}
+.party-name small{display:block;font-size:11px;color:#777;font-weight:500}
 .bar{height:8px;background:#eee;border-radius:20px;margin-top:6px;overflow:hidden}
 .bar div{height:100%;background:#0A1F44}
 .candidate{display:flex;gap:12px;align-items:center;background:#FFF8E1;padding:12px;border-radius:12px;margin-top:14px;border:1px solid #FDE68A}
@@ -146,6 +150,32 @@ body{background:#f6f7f5;color:#111}
 let cachedGlobalData=[];
 let otherPartiesOpen=false;
 const BACKEND_URL=window.location.origin;
+const PARTIES = {
+  'APC':  {name:'All Progressives Congress', logo:'logos/APC.png'},
+  'PDP':  {name:'Peoples Democratic Party', logo:'logos/PDP.png'},
+  'LP':   {name:'Labour Party', logo:'logos/LP.png'},
+  'NNPP': {name:'New Nigeria Peoples Party', logo:'logos/NNPP.png'},
+  'ADC':  {name:'African Democratic Congress', logo:'logos/ADC.png'},
+  'APGA': {name:'All Progressives Grand Alliance', logo:'logos/APGA.png'},
+  'SDP':  {name:'Social Democratic Party', logo:'logos/SDP.png'},
+  'YPP':  {name:'Young Progressives Party', logo:'logos/YPP.png'},
+  'AAC':  {name:'African Action Congress', logo:'logos/AAC.png'},
+  'ADP':  {name:'Action Democratic Party', logo:'logos/ADP.png'},
+  'PRP':  {name:'Peoples Redemption Party', logo:'logos/PRP.png'},
+  'ZLP':  {name:'Zenith Labour Party', logo:'logos/ZLP.png'},
+  'APP':  {name:'Action Peoples Party', logo:'logos/APP.png'},
+  'APM':  {name:'Allied Peoples Movement', logo:'logos/APM.png'},
+  'AA':   {name:'Action Alliance', logo:'logos/AA.png'},
+  'A':    {name:'Accord', logo:'logos/A.png'},
+  'NRM':  {name:'National Rescue Movement', logo:'logos/NRM.png'},
+  'BP':   {name:'Boot Party', logo:'logos/BP.png'},
+};
+function partyFullName(code){ return (PARTIES[code] && PARTIES[code].name) ? PARTIES[code].name : code; }
+function partyLogoHtml(code){
+  const info = PARTIES[code];
+  if(!info || !info.logo) return '<div class="party-logo-fallback">'+code+'</div>';
+  return '<img class="party-logo" src="'+info.logo+'" alt="'+code+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="party-logo-fallback" style="display:none">'+code+'</div>';
+}
 async function fetchResults(){
   try{
     const r=await fetch(BACKEND_URL+'/results?constituency=Gembu&t='+Date.now());
@@ -187,7 +217,7 @@ function toggleOtherParties(){
 }
 function partyRow(p,v,totalVotes){
   let pPct= totalVotes? (v/totalVotes*100).toFixed(1):0;
-  return '<div class="party"><div class="party-info"><b>'+p+'</b><div class="bar"><div style="width:'+pPct+'%"></div></div></div><div style="text-align:right;"><b>'+v.toLocaleString()+'</b><br><span style="font-size:12px;color:#777;">'+pPct+'%</span></div></div>';
+  return '<div class="party">'+partyLogoHtml(p)+'<div class="party-info"><div class="party-name"><b>'+p+'</b><small>'+partyFullName(p)+'</small></div><div class="bar"><div style="width:'+pPct+'%"></div></div></div><div style="text-align:right;"><b>'+v.toLocaleString()+'</b><br><span style="font-size:12px;color:#777;">'+pPct+'%</span></div></div>';
 }
 function renderDashboard(resultsArray){
   const ward=document.getElementById('wardFilter').value;
@@ -284,7 +314,7 @@ function renderDashboard(resultsArray){
       sorted.sort(function(a,b){ return b[1]-a[1]; });
       let lead=sorted.length? sorted[0][0]+' ('+sorted[0][1]+'v)' : 'None';
       let rows='';
-      sorted.forEach(function(e){ rows += '<div style="display:flex;justify-content:space-between;background:#fff;padding:6px 8px;border:1px solid #eee;border-radius:6px;"><span><b>'+e[0]+'</b></span><b style="color:#0A1F44;">'+e[1].toLocaleString()+' votes</b></div>'; });
+      sorted.forEach(function(e){ rows += '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:6px 8px;border:1px solid #eee;border-radius:6px;"><span style="display:flex;align-items:center;gap:8px;"><img src="'+(PARTIES[e[0]]?PARTIES[e[0]].logo:'')+'" style="width:28px;height:28px;object-fit:contain;" onerror="this.style.display=\'none\'"><span><b>'+e[0]+'</b> <span style="font-size:11px;color:#777;">'+partyFullName(e[0])+'</span></span></span><b style="color:#0A1F44;">'+e[1].toLocaleString()+' votes</b></div>'; });
       let photoBtn = res.photo_url ? '<button onclick="openModal(\''+res.photo_url+'\',\''+res.pu_id+'\')" style="background:#0a1f44;color:#fff;padding:8px 12px;border-radius:8px;border:none;margin-top:8px;">View EC8A Photo</button>' : '<span style="font-size:12px;color:#999;">No EC8A photo</span>';
       out += '<div class="pu" onclick="toggleDropdown('+i+')"><b>PU #'+res.pu_id+' - '+(res.ward||'')+'</b><p>BVAS: '+res.bvas_accredited+' | Total: '+res.total_votes+' (Rej: '+res.rejected_votes+') • Leading: '+lead+'</p><div id="dropdown_'+i+'" class="pu-detail"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+rows+'</div><div style="margin-top:8px;">'+photoBtn+'</div><div style="font-size:11px;color:#888;margin-top:6px;">Logged: '+new Date(res.timestamp).toLocaleTimeString()+'</div></div></div>';
     });
