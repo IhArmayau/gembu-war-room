@@ -135,18 +135,17 @@ body{background:#f6f7f5;color:#111}
 let cachedGlobalData=[];
 const BACKEND_URL=window.location.origin;
 let partyShareChartInstance=null, wardTurnoutChartInstance=null;
-
 async function fetchResults(){
   try{
-    const r=await fetch(`${BACKEND_URL}/results?constituency=Gembu`);
+    const r=await fetch(BACKEND_URL+'/results?constituency=Gembu');
     const d=await r.json();
     cachedGlobalData=d.results||[];
   }catch(e){ cachedGlobalData=[]; }
   renderDashboard(cachedGlobalData);
 }
 function filterResults(){ renderDashboard(cachedGlobalData); }
-function selectWard(w){ document.getElementById('wardFilter').value=w; filterResults(); document.getElementById('resultsAccordionContainer').scrollIntoView({behavior:'smooth'}); }
-function exportCsv(){ window.open(`${BACKEND_URL}/export/csv?constituency=Gembu`,'_blank'); }
+function selectWard(w){ document.getElementById('wardFilter').value=w; filterResults(); }
+function exportCsv(){ window.open(BACKEND_URL+'/export/csv?constituency=Gembu','_blank'); }
 function openModal(url,pu,hash){
   document.getElementById('modalImage').src=url;
   document.getElementById('modalPuTitle').innerText='EC8A Sheet — PU #'+pu;
@@ -161,23 +160,26 @@ function toggleDropdown(i){
 function renderDashboard(resultsArray){
   const ward=document.getElementById('wardFilter').value;
   const kw=document.getElementById('searchInput').value.toLowerCase().trim();
-  const filtered=resultsArray.filter(r=>{
+  const filtered=resultsArray.filter(function(r){
     const mw = ward==='ALL' || (r.ward && r.ward.includes(ward));
     const ms = !kw || (r.pu_id && String(r.pu_id).toLowerCase().includes(kw)) || (r.ward && r.ward.toLowerCase().includes(kw));
     return mw && ms;
   });
   let totals={}, totalVotes=0;
-  resultsArray.forEach(x=>{ Object.entries(x.scores||{}).forEach(([p,v])=>{ if(v>0){ totals[p]=(totals[p]||0)+v; totalVotes+=v; } }); });
-  let totalRejected = resultsArray.reduce((a,x)=>a+(x.rejected_votes||0),0);
+  resultsArray.forEach(function(x){
+    Object.entries(x.scores||{}).forEach(function(entry){
+      let p=entry[0], v=entry[1];
+      if(v>0){ totals[p]=(totals[p]||0)+v; totalVotes+=v; }
+    });
+  });
+  let totalRejected = resultsArray.reduce(function(a,x){ return a+(x.rejected_votes||0); },0);
   let totalCounted = totalVotes + totalRejected;
-
   document.getElementById('heroPUs').textContent=resultsArray.length;
   document.getElementById('heroTotalVotes').textContent=totalCounted.toLocaleString();
   let pct=(resultsArray.length/149*100).toFixed(1);
   document.getElementById('heroProgressBar').style.width=pct+'%';
   document.getElementById('heroProgressText').textContent=resultsArray.length+' / 149 PUs - '+pct+'% Reported';
-
-  let parties=Object.entries(totals).filter(([p,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  let parties=Object.entries(totals).filter(function(e){ return e[1]>0; }).sort(function(a,b){ return b[1]-a[1]; });
   if(parties.length===0){
     document.getElementById('leadingBadge').textContent='● No results yet';
     document.getElementById('heroLeaderText').textContent='Waiting for first result...';
@@ -191,64 +193,72 @@ function renderDashboard(resultsArray){
     document.getElementById('leadingBadge').textContent='● '+leader+' leading';
     document.getElementById('heroLeaderText').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes ahead ('+leaderPct+'%)';
     document.getElementById('leadText2').textContent=leader+' is Leading + '+diff.toLocaleString()+' votes';
-    document.getElementById('topPartiesGrid').innerHTML=parties.map(([p,v])=>{
+    let html='';
+    parties.forEach(function(entry){
+      let p=entry[0], v=entry[1];
       let pPct= totalVotes? (v/totalVotes*100).toFixed(1):0;
-      return `<div class="party"><div class="party-info"><b>${p}</b><div class="bar"><div style="width:${pPct}%"></div></div></div><div style="text-align:right;"><b>${v.toLocaleString()}</b><br><span style="font-size:12px;color:#777;">${pPct}%</span></div></div>`;
-    }).join('');
+      html += '<div class="party"><div class="party-info"><b>'+p+'</b><div class="bar"><div style="width:'+pPct+'%"></div></div></div><div style="text-align:right;"><b>'+v.toLocaleString()+'</b><br><span style="font-size:12px;color:#777;">'+pPct+'%</span></div></div>';
+    });
+    document.getElementById('topPartiesGrid').innerHTML=html;
   }
-
   let wardData={};
-  ['Gembu A','Gembu B','Mayo Ndaga','Titong'].forEach(w=>{ wardData[w]={total:0, apc:0, count:0}; });
-  resultsArray.forEach(x=>{
+  ['Gembu A','Gembu B','Mayo Ndaga','Titong'].forEach(function(w){ wardData[w]={total:0, apc:0, count:0}; });
+  resultsArray.forEach(function(x){
     let w=x.ward||'';
     if(w.includes('Titong')) w='Titong';
     if(!wardData[w]) wardData[w]={total:0, apc:0, count:0};
     wardData[w].total += x.total_votes||0;
-    wardData[w].apc += (x.scores?.APC||0);
+    wardData[w].apc += (x.scores && x.scores.APC ? x.scores.APC : 0);
     wardData[w].count += 1;
   });
-  document.getElementById('wardSummaryGrid').innerHTML=Object.entries(wardData).map(([name,d])=>{
+  let wardHtml='';
+  Object.entries(wardData).forEach(function(entry){
+    let name=entry[0], d=entry[1];
     let label = name==='Titong' ? 'Titong ⭐ Home Ward' : name;
     let isTitong = name==='Titong';
-    return `<button onclick="selectWard('${name}')" style="${isTitong?'border:2px solid #D4A017;':''}"><b>${label}</b><span>${d.count} PUs • ${d.total.toLocaleString()} votes • APC: ${d.apc.toLocaleString()}</span></button>`;
-  }).join('');
-
+    let style = isTitong ? 'border:2px solid #D4A017;' : '';
+    wardHtml += '<button onclick="selectWard(\''+name+'\')" style="'+style+'"><b>'+label+'</b><span>'+d.count+' PUs • '+d.total.toLocaleString()+' votes • APC: '+d.apc.toLocaleString()+'</span></button>';
+  });
+  document.getElementById('wardSummaryGrid').innerHTML=wardHtml;
   updateDonutChart(parties);
   updateBarChart(wardData);
-
   const c=document.getElementById('resultsAccordionContainer');
-  if(filtered.length===0){ c.innerHTML=`<div style="padding:20px;text-align:center;color:#999;">No polling unit records found. ${resultsArray.length===0 ? 'Submit first result from Situation Room.' : ''}</div>`; }
-  else{
-    c.innerHTML=filtered.map((res,i)=>{
-      let sorted=Object.entries(res.scores||{}).filter(([p,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  if(filtered.length===0){
+    c.innerHTML='<div style="padding:20px;text-align:center;color:#999;">No polling unit records found.</div>';
+  } else {
+    let out='';
+    filtered.forEach(function(res,i){
+      let sorted=Object.entries(res.scores||{}).filter(function(e){ return e[1]>0; }).sort(function(a,b){ return b[1]-a[1]; });
       let lead=sorted.length? sorted[0][0]+' ('+sorted[0][1]+'v)' : 'None';
-      let rows=sorted.map(([p,v])=>`<div style="display:flex;justify-content:space-between;background:#fff;padding:6px 8px;border:1px solid #eee;border-radius:6px;"><span><b>${p}</b></span><b style="color:#0A1F44;">${v.toLocaleString()} votes</b></div>`).join('');
-      let photoBtn = res.photo_url ? `<button onclick="openModal('${res.photo_url}','${res.pu_id}','')" style="background:#0a1f44;color:#fff;padding:8px 12px;border-radius:8px;border:none;margin-top:8px;">View EC8A Photo</button>` : `<span style="font-size:12px;color:#999;">No EC8A photo</span>`;
-      return `<div class="pu" onclick="toggleDropdown(${i})"><b>PU #${res.pu_id} - ${res.ward||''}</b><p>BVAS: ${res.bvas_accredited} | Total: ${res.total_votes} (Rej: ${res.rejected_votes}) • Leading: ${lead}</p><div id="dropdown_${i}" class="pu-detail"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${rows}</div><div style="margin-top:8px;">${photoBtn}</div><div style="font-size:11px;color:#888;margin-top:6px;">Logged: ${new Date(res.timestamp).toLocaleTimeString()}</div></div></div>`;
-    }).join('');
+      let rows='';
+      sorted.forEach(function(e){ rows += '<div style="display:flex;justify-content:space-between;background:#fff;padding:6px 8px;border:1px solid #eee;border-radius:6px;"><span><b>'+e[0]+'</b></span><b style="color:#0A1F44;">'+e[1].toLocaleString()+' votes</b></div>'; });
+      let photoBtn = res.photo_url ? '<button onclick="openModal(\''+res.photo_url+'\',\''+res.pu_id+'\',\'\')" style="background:#0a1f44;color:#fff;padding:8px 12px;border-radius:8px;border:none;margin-top:8px;">View EC8A Photo</button>' : '<span style="font-size:12px;color:#999;">No EC8A photo</span>';
+      out += '<div class="pu" onclick="toggleDropdown('+i+')"><b>PU #'+res.pu_id+' - '+(res.ward||'')+'</b><p>BVAS: '+res.bvas_accredited+' | Total: '+res.total_votes+' (Rej: '+res.rejected_votes+') • Leading: '+lead+'</p><div id="dropdown_'+i+'" class="pu-detail"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+rows+'</div><div style="margin-top:8px;">'+photoBtn+'</div><div style="font-size:11px;color:#888;margin-top:6px;">Logged: '+new Date(res.timestamp).toLocaleTimeString()+'</div></div></div>';
+    });
+    c.innerHTML=out;
   }
   document.getElementById('updated').textContent=new Date().toLocaleTimeString();
 }
 function updateDonutChart(parties){
-  parties = (parties||[]).filter(p=>p[1]>0).sort((a,b)=>b[1]-a[1]);
+  parties = (parties||[]).filter(function(p){ return p[1]>0; }).sort(function(a,b){ return b[1]-a[1]; });
   const ctx=document.getElementById('partyShareChart').getContext('2d');
   if(partyShareChartInstance) partyShareChartInstance.destroy();
   if(parties.length===0){ document.getElementById('chartEmpty').style.display='block'; return; }
   document.getElementById('chartEmpty').style.display='none';
   let top3 = parties.slice(0,3);
-  let othersTotal = parties.slice(3).reduce((a,p)=>a+p[1],0);
-  let labels = top3.map(p=>p[0]);
-  let data = top3.map(p=>p[1]);
+  let othersTotal = parties.slice(3).reduce(function(a,p){ return a+p[1]; },0);
+  let labels = top3.map(function(p){ return p[0]; });
+  let data = top3.map(function(p){ return p[1]; });
   if(othersTotal>0){ labels.push('Others'); data.push(othersTotal); }
   const colors=['#0A1F44','#D4A017','#64748b','#e2e8f0'];
-  partyShareChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:labels,[STRIPPED]
+  partyShareChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
 }
 function updateBarChart(wardData){
   const ctx=document.getElementById('wardTurnoutChart').getContext('2d');
   if(wardTurnoutChartInstance) wardTurnoutChartInstance.destroy();
   let labels=Object.keys(wardData);
-  let data=labels.map(w=>wardData[w].total);
-  wardTurnoutChartInstance=new Chart(ctx,{type:'bar',data:{labels:labels,[STRIPPED] Votes Cast',data:data,[STRIPPED]
+  let data=labels.map(function(w){ return wardData[w].total; });
+  wardTurnoutChartInstance=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Votes Cast',data:data,backgroundColor:['#0A1F44','#132f5e','#D4A017','#64748b']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
 }
 fetchResults();
 setInterval(fetchResults,60000);
