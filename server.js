@@ -54,6 +54,14 @@ const server = http.createServer((req, res) => {
 
   const { pathname, searchParams } = parseUrl(req.url);
 
+  // --- UPTIMEROBOT KEEP-ALIVE ENDPOINT ---
+  // UptimeRobot will ping this every 5 mins. Very light, no DB load.
+  if (req.method === 'GET' && (pathname === '/health' || pathname === '/ping' || pathname === '/keep-alive')) {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', time: new Date().toISOString() }));
+    return;
+  }
+
   // Serve Live Analytics Dashboard as the root homepage
   if (req.method === 'GET' && pathname === '/') {
     const filePath = path.join(__dirname, 'dashboard.html');
@@ -209,7 +217,6 @@ const server = http.createServer((req, res) => {
           forensicFlags.push("HIGH_REJECTION_RATE_ANOMALY");
         }
 
-        // SAVE TO POSTGRES - not data.json
         const insert = await pool.query(
           `INSERT INTO results (pu_id, constituency, ward, bvas_accredited, rejected_votes, scores, total_votes, photo_url, is_over_voting, forensic_flags) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
           [pu_id, constituency, ward, bvas_accredited, rejected_votes, JSON.stringify(scores), absoluteTotalVotes, photo_url, isOverVoting, forensicFlags]
@@ -288,4 +295,13 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Gembu War Room Postgres Backend running on port ${PORT}`);
+  // Self-ping every 4 minutes - backup to UptimeRobot
+  // Set SELF_URL in Render Environment to your full URL, e.g. https://gembu-war-room.onrender.com
+  const SELF_URL = process.env.SELF_URL || process.env.RENDER_EXTERNAL_URL;
+  if (SELF_URL) {
+    setInterval(() => {
+      fetch(SELF_URL + '/health').then(() => console.log('[KEEP-ALIVE] self-ping ok')).catch(() => {});
+    }, 4 * 60 * 1000);
+    console.log('[KEEP-ALIVE] Self-ping enabled for', SELF_URL);
+  }
 });
