@@ -43,6 +43,7 @@ body{background:#f6f7f5;color:#111}
 .ward-grid button{background:#0a1f44;color:#fff;padding:16px;border-radius:12px;text-align:left;border:none;cursor:pointer}
 .ward-grid button b{display:block}
 .ward-grid button span{color:#d4a017;font-size:12px}
+.ward-grid button.active{outline:3px solid #D4A017;outline-offset:2px}
 .pu{border-bottom:1px solid #f0f0f0;padding:14px 0;cursor:pointer}
 .pu b{font-size:14px}
 .pu p{font-size:12px;color:#666}
@@ -56,7 +57,9 @@ body{background:#f6f7f5;color:#111}
 .wbar-label{display:flex;justify-content:space-between;font-size:13px;font-weight:700}
 .wbar-track{height:14px;background:#eee;border-radius:20px;overflow:hidden;margin-top:4px}
 .wbar-fill{height:100%;background:#0A1F44}
-.show-more{width:100%;padding:11px;background:#f2f3f7;border:1px solid #ddd;border-radius:10px;font-weight:700;color:#0A1F44;cursor:pointer;margin-top:8px}
+.show-more{width:100%;padding:12px;background:#f2f3f7;border:1px solid #ddd;border-radius:10px;font-weight:700;color:#0A1F44;cursor:pointer;margin-top:8px;display:block}
+.filter-banner{display:none;background:#FFF8E1;border:1px solid #FDE68A;color:#0A1F44;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px}
+.filter-banner button{background:#0A1F44;color:#fff;border:none;padding:6px 10px;border-radius:8px;margin-left:8px;font-weight:700}
 </style>
 </head>
 <body>
@@ -81,7 +84,7 @@ body{background:#f6f7f5;color:#111}
 </div>
 
 <div class="controls">
-  <select id="wardFilter" onchange="filterResults()">
+  <select id="wardFilter" onchange="onWardDropdownChange()">
     <option value="ALL">All 4 Wards (149 PUs)</option>
     <option value="Gembu A">Gembu A Ward</option>
     <option value="Gembu B">Gembu B Ward</option>
@@ -119,10 +122,11 @@ body{background:#f6f7f5;color:#111}
   <p id="chartEmpty" style="text-align:center;color:#999;font-size:13px;margin-top:10px;">Charts will appear after first PU is submitted.</p>
 </div>
 
-<div class="section">
+<div class="section" id="puSection">
   <small>Polling Unit Feed</small>
   <h2 style="font-size:18px;">Polling Unit Feed (149 Total Units)</h2>
   <p style="font-size:12px;color:#777;margin-top:4px;">Tap any unit row to inspect full party breakdown & EC8A photo evidence</p>
+  <div id="filterBanner" class="filter-banner">Filtered: <span id="filterBannerText"></span><button onclick="clearWardFilter()">Show All</button></div>
   <input type="text" id="searchInput" onkeyup="filterResults()" placeholder="Search PU Code or Ward Name..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:10px;">
   <div id="resultsAccordionContainer"></div>
 </div>
@@ -140,6 +144,7 @@ body{background:#f6f7f5;color:#111}
 
 <script>
 let cachedGlobalData=[];
+let otherPartiesOpen=false;
 const BACKEND_URL=window.location.origin;
 async function fetchResults(){
   try{
@@ -150,7 +155,17 @@ async function fetchResults(){
   renderDashboard(cachedGlobalData);
 }
 function filterResults(){ renderDashboard(cachedGlobalData); }
-function selectWard(w){ document.getElementById('wardFilter').value=w; filterResults(); }
+function onWardDropdownChange(){ filterResults(); document.getElementById('puSection').scrollIntoView({behavior:'smooth'}); }
+function selectWard(w){
+  document.getElementById('wardFilter').value=w;
+  filterResults();
+  setTimeout(function(){ document.getElementById('puSection').scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+}
+function clearWardFilter(){
+  document.getElementById('wardFilter').value='ALL';
+  document.getElementById('searchInput').value='';
+  filterResults();
+}
 function exportCsv(){ window.open(BACKEND_URL+'/export/csv?constituency=Gembu','_blank'); }
 function openModal(url,pu){
   document.getElementById('modalImage').src=url;
@@ -163,10 +178,12 @@ function toggleDropdown(i){
   el.style.display = el.style.display==='block' ? 'none' : 'block';
 }
 function toggleOtherParties(){
+  otherPartiesOpen = !otherPartiesOpen;
   const el=document.getElementById('otherParties');
   const btn=document.getElementById('otherPartiesBtn');
-  if(el.style.display==='block'){ el.style.display='none'; btn.innerText='▼ Show remaining parties'; }
-  else { el.style.display='block'; btn.innerText='▲ Hide remaining parties'; }
+  if(!el || !btn) return;
+  if(otherPartiesOpen){ el.style.display='block'; btn.innerText='▲ Hide remaining parties'; }
+  else { el.style.display='none'; btn.innerText='▼ Show remaining parties'; }
 }
 function partyRow(p,v,totalVotes){
   let pPct= totalVotes? (v/totalVotes*100).toFixed(1):0;
@@ -216,8 +233,10 @@ function renderDashboard(resultsArray){
     if(rest.length>0){
       let restHtml='';
       rest.forEach(function(e){ restHtml += partyRow(e[0], e[1], totalVotes); });
-      html += '<button id="otherPartiesBtn" class="show-more" onclick="toggleOtherParties()">▼ Show remaining parties ('+rest.length+')</button>';
-      html += '<div id="otherParties" style="display:none;">'+restHtml+'</div>';
+      let btnText = otherPartiesOpen ? '▲ Hide remaining parties' : '▼ Show remaining parties ('+rest.length+')';
+      let disp = otherPartiesOpen ? 'block' : 'none';
+      html += '<button type="button" id="otherPartiesBtn" class="show-more" onclick="toggleOtherParties()">'+btnText+'</button>';
+      html += '<div id="otherParties" style="display:'+disp+';">'+restHtml+'</div>';
     }
     document.getElementById('topPartiesGrid').innerHTML=html;
   }
@@ -235,14 +254,28 @@ function renderDashboard(resultsArray){
   for(let name in wardData){
     let d=wardData[name];
     let label = name==='Titong' ? 'Titong ⭐ Home Ward' : name;
-    let style = name==='Titong' ? 'border:2px solid #D4A017;' : '';
-    wardHtml += '<button onclick="selectWard(\''+name+'\')" style="'+style+'"><b>'+label+'</b><span>'+d.count+' PUs • '+d.total.toLocaleString()+' votes • APC: '+d.apc.toLocaleString()+'</span></button>';
+    let isActive = (ward===name);
+    let cls = isActive ? 'active' : '';
+    let style = '';
+    if(name==='Titong') style='border:2px solid #D4A017;';
+    if(isActive) style='border:3px solid #D4A017;';
+    wardHtml += '<button type="button" class="'+cls+'" onclick="selectWard(\''+name+'\')" style="'+style+'"><b>'+label+'</b><span>'+d.count+' PUs • '+d.total.toLocaleString()+' votes • APC: '+d.apc.toLocaleString()+'</span></button>';
   }
   document.getElementById('wardSummaryGrid').innerHTML=wardHtml;
   renderCharts(parties, wardData, totalVotes);
+  const banner=document.getElementById('filterBanner');
+  if(ward!=='ALL'){
+    banner.style.display='block';
+    document.getElementById('filterBannerText').textContent=ward+' • '+filtered.length+' PU(s) shown';
+  } else if(kw){
+    banner.style.display='block';
+    document.getElementById('filterBannerText').textContent='Search: "'+kw+'" • '+filtered.length+' PU(s) shown';
+  } else {
+    banner.style.display='none';
+  }
   const c=document.getElementById('resultsAccordionContainer');
   if(filtered.length===0){
-    c.innerHTML='<div style="padding:20px;text-align:center;color:#999;">No polling unit records found.</div>';
+    c.innerHTML='<div style="padding:20px;text-align:center;color:#999;">No polling unit records found for this ward.</div>';
   } else {
     let out='';
     filtered.forEach(function(res,i){
