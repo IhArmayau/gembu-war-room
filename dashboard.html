@@ -149,6 +149,7 @@ body{background:#f6f7f5;color:#111}
 
 <script>
 let cachedGlobalData=[];
+let puVisible = 10;
 let otherPartiesOpen=false;
 const BACKEND_URL=window.location.origin;
 const PARTIES = {
@@ -185,7 +186,8 @@ async function fetchResults(){
   }catch(e){ cachedGlobalData=[]; }
   renderDashboard(cachedGlobalData);
 }
-function filterResults(){ renderDashboard(cachedGlobalData); }
+function filterResults(){ puVisible = 10; renderDashboard(cachedGlobalData); }
+function showMorePUs(){ puVisible += 10; renderDashboard(cachedGlobalData); }
 function onWardDropdownChange(){ filterResults(); document.getElementById('puSection').scrollIntoView({behavior:'smooth'}); }
 function selectWard(w){
   document.getElementById('wardFilter').value=w;
@@ -311,7 +313,8 @@ function renderDashboard(resultsArray){
     c.innerHTML='<div style="padding:20px;text-align:center;color:#999;">No polling unit records found for this ward.</div>';
   } else {
     let out='';
-    filtered.forEach(function(res,i){
+    let shown = filtered.slice(0, puVisible);
+    shown.forEach(function(res,i){
       let sorted=[];
       for(let p in (res.scores||{})){ if(res.scores[p]>0) sorted.push([p,res.scores[p]]); }
       sorted.sort(function(a,b){ return b[1]-a[1]; });
@@ -321,6 +324,11 @@ function renderDashboard(resultsArray){
       let photoBtn = res.photo_url ? '<button onclick="openModal(\''+res.photo_url+'\',\''+res.pu_id+'\')" style="background:#0a1f44;color:#fff;padding:8px 12px;border-radius:8px;border:none;margin-top:8px;">View EC8A Photo</button>' : '<span style="font-size:12px;color:#999;">No EC8A photo</span>';
       out += '<div class="pu" onclick="toggleDropdown('+i+')"><b>PU #'+res.pu_id+' - '+(res.ward||'')+'</b><p>BVAS: '+res.bvas_accredited+' | Total: '+res.total_votes+' (Rej: '+res.rejected_votes+') • Leading: '+lead+'</p><div id="dropdown_'+i+'" class="pu-detail"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">'+rows+'</div><div style="margin-top:8px;">'+photoBtn+'</div><div style="font-size:11px;color:#888;margin-top:6px;">Logged: '+new Date(res.timestamp).toLocaleTimeString()+'</div></div></div>';
     });
+    if(filtered.length > puVisible){
+      out += '<button class="show-more" onclick="showMorePUs()">▼ Show More PUs (' + (filtered.length - puVisible) + ' remaining)</button>';
+    } else if(filtered.length > 10){
+      out += '<div style="text-align:center;padding:12px;color:#888;font-size:13px;">All ' + filtered.length + ' PUs shown</div>';
+    }
     c.innerHTML=out;
   }
   document.getElementById('updated').textContent=new Date().toLocaleTimeString();
