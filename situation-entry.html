@@ -7,19 +7,19 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:#f6f7f5;color:#111}
-.top{background:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:20}
+.top{background:#0A1F44;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #D4A017;position:sticky;top:0;z-index:20}
 .logo-row{display:flex;align-items:center;gap:10px}
-.logo{width:40px;height:40px;border-radius:50%;background:#0a5c36;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logo{width:40px;height:40px;border-radius:10px;background:#D4A017;color:#0A1F44;display:flex;align-items:center;justify-content:center;font-weight:800}
 .logo-row b{font-size:15px;line-height:1.1;display:block}
-.logo-row span{font-size:12px;color:#666}
+.logo-row span{font-size:12px;color:#cbd5e1}
 .wrap{max-width:900px;margin:0 auto;padding:14px 12px 30px}
-.hero{background:#0a5c36;color:#fff;padding:20px 16px;border-radius:16px}
+.hero{background:#0A1F44;color:#fff;padding:20px 16px;border-radius:16px}
 .hero h1{font-size:24px;line-height:1.1}
-.hero p{color:#d6e8dd;font-size:13px;margin-top:6px}
+.hero p{color:#cbd5e1;font-size:13px;margin-top:6px}
 .card{background:#fff;border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
 label{font-size:11px;font-weight:700;text-transform:uppercase;color:#333;display:block;margin-bottom:5px}
 input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;font-size:14px;background:#fff}
-input:focus,select:focus{outline:none;border-color:#0a5c36}
+input:focus,select:focus{outline:none;border-color:#0A1F44}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .party-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -27,14 +27,15 @@ input:focus,select:focus{outline:none;border-color:#0a5c36}
 .party-grid div{background:#f9faf9;padding:8px;border-radius:10px;border:1px solid #eee}
 .party-grid span{font-size:11px;font-weight:700;color:#666;display:block;margin-bottom:4px}
 .party-grid input{padding:8px}
-.btn-green{background:#0a5c36;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+.btn-green{background:#0A1F44;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
 .btn-dark{background:#fff;color:#111;border:1px solid #ddd;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;font-size:12px}
 .btn-red{background:#fff;color:#c00;border:1px solid #f5c6c6;padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;font-size:12px}
 #statusMessage{margin-top:12px;padding:12px;border-radius:12px;font-size:13px;font-weight:700;text-align:center;display:none}
-#authModal{position:fixed;inset:0;background:#0a5c36;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+#authModal{position:fixed;inset:0;background:#0A1F44;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
 .auth-box{background:#fff;border-radius:16px;max-width:380px;width:100%;padding:22px;text-align:center}
 .auth-box h2{font-size:18px;margin:10px 0 4px}
 .auth-box p{font-size:12px;color:#666}
+.live-badge{background:#D4A017;color:#0A1F44;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
 </style>
 </head>
 <body>
@@ -42,7 +43,7 @@ input:focus,select:focus{outline:none;border-color:#0a5c36}
 <!-- PIN -->
 <div id="authModal">
   <div class="auth-box">
-    <div style="width:56px;height:56px;background:#e6f4ee;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto;">🔒</div>
+    <div style="width:56px;height:56px;background:#FFF8E1;border:2px solid #D4A017;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto;">🔒</div>
     <h2>SITUATION ROOM</h2>
     <p>GSSS Gembu Collation Center — Authorized Clerks Only</p>
     <div style="margin-top:16px;">
@@ -56,8 +57,8 @@ input:focus,select:focus{outline:none;border-color:#0a5c36}
 
 <!-- TOP -->
 <div class="top">
-  <div class="logo-row"><div class="logo">TS</div><div><b>Gembu Constituency</b><span>Situation Room • GSSS Gembu</span></div></div>
-  <div style="background:#e6f4ee;color:#0a5c36;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700;">● LIVE</div>
+  <div class="logo-row"><div class="logo">G</div><div><b>Gembu Constituency</b><span>Situation Room • GSSS Gembu</span></div></div>
+  <div class="live-badge">● LIVE</div>
 </div>
 
 <div class="wrap" id="mainContent" style="display:none;">
@@ -68,7 +69,7 @@ input:focus,select:focus{outline:none;border-color:#0a5c36}
       <a href="/" target="_blank" class="btn-dark" style="background:#fff;">Open Live Dashboard ➔</a>
       <button onclick="logoutSituationRoom()" class="btn-red">🔒 Logout</button>
     </div>
-    <p style="margin-top:12px;font-size:12px;color:#cfe6d8;">Submitted: <b id="submittedCount">—</b> PUs &nbsp;•&nbsp; Last update: <span id="lastUpdate">—</span></p>
+    <p style="margin-top:12px;font-size:12px;color:#cbd5e1;">Submitted: <b id="submittedCount" style="color:#D4A017;">—</b> PUs &nbsp;•&nbsp; Last update: <span id="lastUpdate">—</span></p>
   </div>
 
   <form id="relayForm" onsubmit="submitRelayData(event)" class="card">
@@ -92,14 +93,14 @@ input:focus,select:focus{outline:none;border-color:#0a5c36}
     </div>
 
     <div style="margin-top:16px;">
-      <label style="color:#0a5c36;">Official INEC Registered Parties (Phone Dictation)</label>
+      <label style="color:#0A1F44;">Official INEC Registered Parties (Phone Dictation)</label>
       <div class="party-grid">
         <div><span>A</span><input type="number" id="score_A" min="0" value="0"></div>
         <div><span>AA</span><input type="number" id="score_AA" min="0" value="0"></div>
         <div><span>AAC</span><input type="number" id="score_AAC" min="0" value="0"></div>
         <div><span>ADC</span><input type="number" id="score_ADC" min="0" value="0"></div>
         <div><span>ADP</span><input type="number" id="score_ADP" min="0" value="0"></div>
-        <div><span>APC</span><input type="number" id="score_APC" min="0" value="0" style="border-color:#0a5c36;background:#e6f4ee;font-weight:700;"></div>
+        <div><span>APC</span><input type="number" id="score_APC" min="0" value="0" style="border-color:#D4A017;background:#FFF8E1;font-weight:700;"></div>
         <div><span>APGA</span><input type="number" id="score_APGA" min="0" value="0"></div>
         <div><span>APM</span><input type="number" id="score_APM" min="0" value="0"></div>
         <div><span>APP</span><input type="number" id="score_APP" min="0" value="0"></div>
@@ -186,7 +187,7 @@ async function submitRelayData(event){
     const res=await fetch(`${BACKEND_URL}/submit`,{method:'POST',body:formData});
     const result=await res.json();
     if(res.ok){
-      alertBox.style.display='block'; alertBox.style.background='#e6f4ee'; alertBox.style.color='#0a5c36';
+      alertBox.style.display='block'; alertBox.style.background='#FFF8E1'; alertBox.style.color='#0A1F44';
       alertBox.innerText=`Success! PU #${document.getElementById('pu_id').value} logged successfully.`;
       document.getElementById('relayForm').reset();
       loadCount();
