@@ -2,7 +2,7 @@
   "name": "Gembu Constituency Results",
   "short_name": "Gembu Constituency",
   "description": "Live State Assembly election results for Gembu Constituency",
-  "start_url": "./?v=2",
+  "start_url": "./?v=3",
   "display": "standalone",
   "background_color": "#0A1F44",
   "theme_color": "#0A1F44",
@@ -18,7 +18,7 @@
       "src": "icon-512-v2.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
