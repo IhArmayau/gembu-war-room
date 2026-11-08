@@ -107,7 +107,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && pathname === '/manifest.json') {
     const filePath = path.join(__dirname, 'manifest.json');
     if (fs.existsSync(filePath)) {
-      res.writeHead(200, { 'Content-Type': 'application/manifest+json', 'Cache-Control': 'public, max-age=3600' });
+      res.writeHead(200, { 'Content-Type': 'application/manifest+json', 'Cache-Control': 'no-store, no-cache, must-revalidate' });
       fs.createReadStream(filePath).pipe(res);
       return;
     } else {
@@ -126,7 +126,7 @@ const server = http.createServer((req, res) => {
     if (fs.existsSync(filePath)) {
       const ext = path.extname(filePath).toLowerCase();
       const contentType = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
-      res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600' });
+      res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-store, no-cache, must-revalidate' });
       fs.createReadStream(filePath).pipe(res);
       return;
     } else {
